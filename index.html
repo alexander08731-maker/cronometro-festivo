@@ -6,40 +6,109 @@
 <title>Cronómetro de Navidad</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
-body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#450a0a,#7f1d1d,#064e3b);color:#fff;padding:20px;text-align:center}
-.emoji{font-size:4rem;margin-bottom:10px}
-h1{font-size:2.2rem;margin-bottom:6px}
-.sub{opacity:.8;margin-bottom:28px;font-size:.95rem}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:14px;width:100%;max-width:440px}
-@media(min-width:520px){.grid{grid-template-columns:repeat(4,1fr);max-width:680px}}
-.box{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:22px 10px;backdrop-filter:blur(8px)}
-.num{display:block;font-size:2.6rem;font-weight:800;font-variant-numeric:tabular-nums}
-.lbl{font-size:.75rem;text-transform:uppercase;letter-spacing:2px;opacity:.75;margin-top:6px}
-.msg{margin-top:24px;font-size:1.3rem;font-weight:700;display:none}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:linear-gradient(135deg,#450a0a,#7f1d1d,#064e3b);color:#fff;padding:24px 16px;text-align:center}
+.card{width:100%;max-width:560px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.15);border-radius:24px;padding:20px 16px}
+.emoji{font-size:3.2rem;margin-bottom:6px}
+h1{font-size:1.9rem;margin-bottom:4px}
+h2{font-size:1.3rem;margin-bottom:4px}
+.sub{opacity:.8;margin-bottom:18px;font-size:.9rem}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:480px){.grid{grid-template-columns:repeat(4,1fr)}}
+.box{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:14px 6px}
+.num{display:block;font-size:2rem;font-weight:800;font-variant-numeric:tabular-nums}
+.lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;opacity:.75;margin-top:4px}
+.msg{margin-top:14px;font-size:1.05rem;font-weight:700;display:none}
+form{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+input,button{padding:11px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.25);font-size:.95rem}
+input{background:rgba(255,255,255,.12);color:#fff}
+input::placeholder{color:rgba(255,255,255,.65)}
+button{background:#10b981;color:#052e16;font-weight:700;border:none;cursor:pointer}
+.btn-del{margin-top:14px;background:rgba(255,255,255,.16);color:#fff;font-size:.82rem;padding:8px 14px}
+.hidden{display:none}
 </style>
 </head>
 <body>
-<div class="emoji">🎄</div>
-<h1>Navidad</h1>
-<p class="sub" id="fecha">25 de diciembre</p>
-<div class="grid">
-  <div class="box"><span class="num" id="d">00</span><div class="lbl">Días</div></div>
-  <div class="box"><span class="num" id="h">00</span><div class="lbl">Horas</div></div>
-  <div class="box"><span class="num" id="m">00</span><div class="lbl">Minutos</div></div>
-  <div class="box"><span class="num" id="s">00</span><div class="lbl">Segundos</div></div>
-</div>
-<div class="msg" id="msg">¡Feliz Navidad! 🎅🎄</div>
+
+<section class="card">
+  <div class="emoji">🎄</div>
+  <h1>Navidad</h1>
+  <p class="sub" id="f-nav">25 de diciembre</p>
+  <div class="grid">
+    <div class="box"><span class="num" id="nd">00</span><div class="lbl">Días</div></div>
+    <div class="box"><span class="num" id="nh">00</span><div class="lbl">Horas</div></div>
+    <div class="box"><span class="num" id="nm">00</span><div class="lbl">Minutos</div></div>
+    <div class="box"><span class="num" id="ns">00</span><div class="lbl">Segundos</div></div>
+  </div>
+  <div class="msg" id="m-nav">¡Feliz Navidad! 🎅🎄</div>
+</section>
+
+<section class="card">
+  <div id="form-box">
+    <h2>✨ Agregar una fecha</h2>
+    <p class="sub">Guarda un segundo cronómetro personal</p>
+    <form id="form">
+      <input type="text" id="inp-name" placeholder="Nombre (ej. Mi cumpleaños)" maxlength="30" required>
+      <input type="datetime-local" id="inp-date" required>
+      <button type="submit">Guardar fecha</button>
+    </form>
+  </div>
+
+  <div id="custom-box" class="hidden">
+    <div class="emoji" style="font-size:2.4rem">✨</div>
+    <h2 id="c-title">Mi Evento</h2>
+    <p class="sub" id="f-cus"></p>
+    <div class="grid">
+      <div class="box"><span class="num" id="cd">00</span><div class="lbl">Días</div></div>
+      <div class="box"><span class="num" id="ch">00</span><div class="lbl">Horas</div></div>
+      <div class="box"><span class="num" id="cm">00</span><div class="lbl">Minutos</div></div>
+      <div class="box"><span class="num" id="cs">00</span><div class="lbl">Segundos</div></div>
+    </div>
+    <div class="msg" id="m-cus">¡Llegó el momento! 🎉</div>
+    <button type="button" class="btn-del" id="btn-del">Cambiar o eliminar fecha</button>
+  </div>
+</section>
+
 <script>
-function meta(){const n=new Date(),y=n.getFullYear(),t=new Date(y,11,25);return n>=t?new Date(y+1,11,25):t}
-const objetivo=meta();
-document.getElementById("fecha").textContent="25 de diciembre de "+objetivo.getFullYear();
-function tick(){const diff=objetivo-new Date();if(diff<=0){["d","h","m","s"].forEach(id=>document.getElementById(id).textContent="00");document.getElementById("msg").style.display="block";return}
-const sec=Math.floor(diff/1000);
-document.getElementById("d").textContent=String(Math.floor(sec/86400)).padStart(2,"0");
-document.getElementById("h").textContent=String(Math.floor(sec%86400/3600)).padStart(2,"0");
-document.getElementById("m").textContent=String(Math.floor(sec%3600/60)).padStart(2,"0");
-document.getElementById("s").textContent=String(sec%60).padStart(2,"0")}
-tick();setInterval(tick,1000);
+const navTarget=(()=>{const n=new Date(),y=n.getFullYear(),t=new Date(y,11,25);return n>=t?new Date(y+1,11,25):t})();
+document.getElementById("f-nav").textContent="25 de diciembre de "+navTarget.getFullYear();
+
+let custom=JSON.parse(localStorage.getItem("mi_fecha")||"null");
+const formBox=document.getElementById("form-box"),customBox=document.getElementById("custom-box");
+
+function renderCustom(){
+  if(!custom){formBox.classList.remove("hidden");customBox.classList.add("hidden");return}
+  formBox.classList.add("hidden");customBox.classList.remove("hidden");
+  document.getElementById("c-title").textContent=custom.name;
+  document.getElementById("f-cus").textContent=new Date(custom.ts).toLocaleString("es-ES",{dateStyle:"long",timeStyle:"short"});
+}
+
+document.getElementById("form").onsubmit=e=>{
+  e.preventDefault();
+  const name=document.getElementById("inp-name").value.trim();
+  const ts=new Date(document.getElementById("inp-date").value).getTime();
+  if(!name||isNaN(ts))return;
+  custom={name,ts};
+  localStorage.setItem("mi_fecha",JSON.stringify(custom));
+  renderCustom();tick();
+};
+
+document.getElementById("btn-del").onclick=()=>{
+  localStorage.removeItem("mi_fecha");custom=null;renderCustom();
+};
+
+function update(target,p,msgId){
+  const diff=target-Date.now(),msg=document.getElementById(msgId);
+  if(diff<=0){["d","h","m","s"].forEach(k=>document.getElementById(p+k).textContent="00");msg.style.display="block";return}
+  msg.style.display="none";
+  const s=Math.floor(diff/1000);
+  document.getElementById(p+"d").textContent=String(Math.floor(s/86400)).padStart(2,"0");
+  document.getElementById(p+"h").textContent=String(Math.floor(s%86400/3600)).padStart(2,"0");
+  document.getElementById(p+"m").textContent=String(Math.floor(s%3600/60)).padStart(2,"0");
+  document.getElementById(p+"s").textContent=String(s%60).padStart(2,"0");
+}
+
+function tick(){update(navTarget,"n","m-nav");if(custom)update(custom.ts,"c","m-cus")}
+renderCustom();tick();setInterval(tick,1000);
 </script>
 </body>
 </html>
