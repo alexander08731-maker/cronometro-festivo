@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cronómetro & 20 Mejores Fechas</title>
+<title>Cronómetro & +100 Fechas</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
 body{min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:18px;background:linear-gradient(135deg,#450a0a,#7f1d1d,#064e3b);color:#fff;padding:18px 14px 36px;text-align:center}
-.topbar{width:100%;max-width:640px;display:flex;gap:10px;padding:8px;border-radius:18px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);box-shadow:0 10px 25px rgba(0,0,0,.35)}
+.topbar{width:100%;max-width:660px;display:flex;gap:10px;padding:8px;border-radius:18px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);box-shadow:0 10px 25px rgba(0,0,0,.35)}
 .nav-btn{flex:1;padding:11px 12px;border-radius:13px;border:none;font-size:.9rem;font-weight:800;cursor:pointer;transition:.2s}
 .nav-main{background:rgba(255,255,255,.14);color:#fff}
 .nav-top{background:linear-gradient(90deg,#f59e0b,#ec4899,#8b5cf6);color:#fff;box-shadow:0 4px 15px rgba(236,72,153,.35)}
 .nav-btn.active{outline:2px solid #fff;transform:scale(1.01)}
-.wrap{width:100%;max-width:640px;display:flex;flex-direction:column;gap:20px}
+.wrap{width:100%;max-width:660px;display:flex;flex-direction:column;gap:20px}
 .card{width:100%;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.16);border-radius:24px;padding:20px 14px}
 .emoji{font-size:3rem;margin-bottom:6px}
 h1{font-size:1.85rem;margin-bottom:4px}
@@ -28,16 +28,17 @@ h2{font-size:1.25rem;margin-bottom:4px}
 .next-box p{font-weight:800;font-size:1rem;margin-bottom:10px}
 .next-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 select,input,.act-btn{padding:11px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.25);font-size:.92rem}
-select{background:#1f2937;color:#fff;flex:1;min-width:190px}
-input{background:rgba(255,255,255,.12);color:#fff}
+select{background:#1f2937;color:#fff;flex:1;min-width:190px;max-width:100%}
+input{background:rgba(255,255,255,.12);color:#fff;width:100%}
 input::placeholder{color:rgba(255,255,255,.65)}
 form{display:flex;flex-direction:column;gap:10px;margin-top:8px}
 .act-btn{background:#10b981;color:#052e16;font-weight:800;border:none;cursor:pointer}
 .btn-del{margin-top:12px;background:rgba(255,255,255,.16);color:#fff;font-size:.82rem;padding:8px 14px;border:none;border-radius:10px;cursor:pointer}
-.table-wrap{width:100%;overflow-x:auto;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.14)}
+.search-box{margin-bottom:12px}
+.table-wrap{width:100%;max-height:460px;overflow:auto;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.14)}
 table{width:100%;border-collapse:collapse;font-size:.84rem}
 th,td{padding:9px 8px;border-bottom:1px solid rgba(255,255,255,.1);text-align:left}
-th{background:rgba(255,255,255,.1);font-size:.74rem;text-transform:uppercase;letter-spacing:1px}
+th{position:sticky;top:0;background:#2a0b0e;font-size:.74rem;text-transform:uppercase;letter-spacing:1px;z-index:1}
 .pick-btn{padding:6px 9px;border-radius:8px;border:none;background:#fbbf24;color:#1f2937;font-weight:800;font-size:.75rem;cursor:pointer;white-space:nowrap}
 .hidden{display:none}
 </style>
@@ -101,7 +102,10 @@ th{background:rgba(255,255,255,.1);font-size:.74rem;text-transform:uppercase;let
   <section class="card">
     <div class="emoji">🏆</div>
     <h1>Las Mejores Fechas</h1>
-    <p class="sub">20 fechas festivas ordenadas por cercanía</p>
+    <p class="sub" id="top-count">Cargando fechas...</p>
+    <div class="search-box">
+      <input type="search" id="search-inp" placeholder="🔍 Buscar fecha (ej. Halloween, Pascua, Navidad...)">
+    </div>
     <div class="table-wrap">
       <table>
         <thead>
@@ -118,29 +122,104 @@ function easterDate(y){
   const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31)-1,da=((h+l-7*m+114)%31)+1;
   return new Date(y,mo,da,0,0,0);
 }
+function nthWeekday(y,m,wd,n){
+  const f=new Date(y,m,1,0,0,0),off=(wd-f.getDay()+7)%7;
+  return new Date(y,m,1+off+(n-1)*7,0,0,0);
+}
 
-const festDefs=[
-  {n:"🎆 Año Nuevo",fn:y=>new Date(y,0,1)},
-  {n:"👑 Día de Reyes",fn:y=>new Date(y,0,6)},
-  {n:"💘 San Valentín",fn:y=>new Date(y,1,14)},
-  {n:"🌷 Día de la Mujer",fn:y=>new Date(y,2,8)},
-  {n:"☘️ San Patricio",fn:y=>new Date(y,2,17)},
-  {n:"🐰 Pascua",fn:y=>easterDate(y)},
-  {n:"🌍 Día de la Tierra",fn:y=>new Date(y,3,22)},
-  {n:"🌼 Día del Trabajo",fn:y=>new Date(y,4,1)},
-  {n:"⭐ Star Wars Day",fn:y=>new Date(y,4,4)},
-  {n:"🌺 Día de las Madres",fn:y=>new Date(y,4,10)},
-  {n:"🏳️‍🌈 Orgullo",fn:y=>new Date(y,5,28)},
-  {n:"🤝 Día de la Amistad",fn:y=>new Date(y,6,20)},
-  {n:"🎂 Día del Niño",fn:y=>new Date(y,7,16)},
-  {n:"🎮 Día del Gamer",fn:y=>new Date(y,7,29)},
-  {n:"🍂 Equinoccio de Otoño",fn:y=>new Date(y,8,22)},
-  {n:"🎃 Halloween",fn:y=>new Date(y,9,31)},
-  {n:"🦃 Día de Gracias",fn:y=>{const f=new Date(y,10,1);return new Date(y,10,1+((4-f.getDay()+7)%7)+21)}},
-  {n:"🛍️ Black Friday",fn:y=>{const f=new Date(y,10,1);return new Date(y,10,1+((4-f.getDay()+7)%7)+22)}},
-  {n:"🎄 Navidad",fn:y=>new Date(y,11,25)},
-  {n:"🥂 Fin de Año",fn:y=>new Date(y,11,31)}
+const rawDates=[
+  ["🎆","Año Nuevo",0,1],["👑","Día de Reyes",0,6],["📚","Día Mundial de la Educación",0,24],["🎗️","Día contra el Cáncer",1,4],["💘","San Valentín",1,14],["🗣️","Día de la Lengua Materna",1,21],
+  ["🌷","Día de la Mujer",2,8],["🔢","Día de Pi",2,14],["☘️","San Patricio",2,17],["😄","Día de la Felicidad",2,20],["🌳","Día de los Bosques",2,21],["💧","Día del Agua",2,22],["🌤️","Equinoccio de Marzo",2,20],
+  ["😂","Día de las Bromas",3,1],["📚","Día del Libro",3,23],["🌍","Día de la Tierra",3,22],["🐾","Día del Animal",3,29],["🎶","Día del Jazz",3,30],
+  ["🌼","Día del Trabajo",4,1],["📰","Libertad de Prensa",4,3],["⭐","Star Wars Day",4,4],["🌮","Cinco de Mayo",4,5],["🌺","Día de las Madres",4,10],["👨‍👩‍👧","Día de la Familia",4,15],["🐝","Día de las Abejas",4,20],["🦒","Día de la Jirafa",4,21],["🐢","Día de la Tortuga",4,23],[" nerd","Día del Friki",4,25],
+  ["🌱","Día del Medio Ambiente",5,5],["🌊","Día de los Océanos",5,8],["🎵","Día de la Música",5,21],["☀️","Solsticio de Junio",5,21],["🏳️‍🌈","Día del Orgullo",5,28],["📱","Día de las Redes Sociales",5,30],
+  ["🌐","Día de Internet",6,17],["🤝","Día de la Amistad",6,20],["🧘","Día del Yoga",6,21],["🐬","Día de los Delfines",6,23],["🐯","Día del Tigre",6,29],
+  ["🍺","Día de la Cerveza",7,1],["🐱","Día del Gato",7,8],["🏖️","Día de la Playa",7,11],["🐘","Día del Elefante",7,12],["📸","Día de la Fotografía",7,19],["🐶","Día del Perro",7,26],["🎮","Día del Gamer",7,29],
+  ["🌻","Día de la Primavera / Flores",8,21],["🍂","Equinoccio de Septiembre",8,22],["🌎","Día del Turismo",8,27],["☕","Día del Café",9,1],["🎶","Día de la Música",9,1],["🐾","Día de los Animales",9,4],["🧠","Salud Mental",9,10],["👧","Día de la Niña",9,11],["🏛️","Día de la Hispanidad",9,12],["💻","Día del Programador",9,13],["🍽️","Día de la Alimentación",9,16],["🎃","Halloween",9,31],
+  ["🕊️","Día de Todos los Santos",10,1],["💀","Día de Muertos",10,2],["📝","Día del Soltero",10,11],["🎉","Día de la Música",10,22],["🛍️","Black Friday",10,27],["💻","Cyber Monday",10,30],
+  ["🎗️","Día contra el SIDA",11,1],["🦸","Día de los Superhéroes",11,4],["🥷","Día de los Ninjas",11,5],["🏔️","Día de las Montañas",11,11],["🍵","Día del Té",11,15],["☀️","Solsticio de Diciembre",11,21],["🎄","Nochebuena",11,24],["🎅","Navidad",11,25],["🥂","Fin de Año",11,31],
+  ["🐰","Domingo de Pascua",y=>easterDate(y)],
+  ["🐣","Lunes de Pascua",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()+1,0,0,0)}],
+  ["🙏","Viernes Santo",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()-2,0,0,0)}],
+  ["🎭","Martes de Carnaval",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()-47,0,0,0)}],
+  ["🦃","Día de Acción de Gracias",y=>nthWeekday(y,10,4,4)],
+  ["💝","Día de las Madres (EE.UU.)",y=>nthWeekday(y,4,0,2)],
+  ["👔","Día del Padre (EE.UU.)",y=>nthWeekday(y,5,0,3)],
+  ["🇺🇸","Memorial Day",y=>{const d=new Date(y,4,31,0,0,0);while(d.getDay()!==1)d.setDate(d.getDate()-1);return d}],
+  ["🛠️","Labor Day (EE.UU.)",y=>nthWeekday(y,8,1,1)],
+  ["🗳️","Día de Elecciones (EE.UU.)",y=>{const d=new Date(y,10,1,0,0,0);while(d.getDay()!==1)d.setDate(d.getDate()+1);d.setDate(d.getDate()+1);return d}],
+  ["🕯️","Hanukkah (Inicio ref.)",y=>new Date(y,11,15,0,0,0)],
+  ["🪔","Diwali (Ref.)",y=>new Date(y,9,20,0,0,0)],
+  ["🧧","Año Nuevo Chino (Ref.)",y=>new Date(y,1,10,0,0,0)],
+  ["🌙","Ramadán (Ref.)",y=>new Date(y,2,1,0,0,0)],
+  ["🚀","Lanzamiento Espacial",y=>new Date(y,6,16,0,0,0)],
+  ["🎬","Día del Cine",y=>new Date(y,7,27,0,0,0)],
+  ["🍕","Día de la Pizza",y=>new Date(y,1,9,0,0,0)],
+  ["🍫","Día del Chocolate",y=>new Date(y,6,7,0,0,0)],
+  ["🌮","Día del Taco",y=>new Date(y,2,31,0,0,0)],
+  ["🍩","Día de la Dona",y=>new Date(y,5,6,0,0,0)],
+  ["🎮","Día del Videojuego",y=>new Date(y,7,29,0,0,0)],
+  ["🤖","Día de la Robótica",y=>new Date(y,3,2,0,0,0)],
+  ["🌌","Día de la Astronomía",y=>new Date(y,3,25,0,0,0)],
+  ["📚","Día de los Maestros",y=>new Date(y,8,11,0,0,0)],
+  ["🩺","Día de la Salud",y=>new Date(y,3,7,0,0,0)],
+  ["🚒","Día de los Bomberos",y=>new Date(y,4,4,0,0,0)],
+  ["👮","Día de la Policía",y=>new Date(y,8,29,0,0,0)],
+  ["⚓","Día de la Marina",y=>new Date(y,4,21,0,0,0)],
+  ["✈️","Día de la Aviación",y=>new Date(y,11,7,0,0,0)],
+  ["🚴","Día de la Bicicleta",y=>new Date(y,5,3,0,0,0)],
+  ["🏃","Día del Deporte",y=>new Date(y,3,6,0,0,0)],
+  ["⚽","Día del Fútbol",y=>new Date(y,4,25,0,0,0)],
+  ["🏀","Día del Básquetbol",y=>new Date(y,11,21,0,0,0)],
+  ["🎾","Día del Tenis",y=>new Date(y,2,3,0,0,0)],
+  ["♟️","Día del Ajedrez",y=>new Date(y,6,20,0,0,0)],
+  ["🎨","Día del Arte",y=>new Date(y,3,15,0,0,0)],
+  ["✍️","Día del Escritor",y=>new Date(y,2,3,0,0,0)],
+  ["🎭","Día del Teatro",y=>new Date(y,2,27,0,0,0)],
+  ["💃","Día de la Danza",y=>new Date(y,3,29,0,0,0)],
+  ["🎞️","Día de la Animación",y=>new Date(y,9,28,0,0,0)],
+  ["🎧","Día del DJ",y=>new Date(y,2,9,0,0,0)],
+  ["📺","Día de la Televisión",y=>new Date(y,10,21,0,0,0)],
+  ["📻","Día de la Radio",y=>new Date(y,1,13,0,0,0)],
+  ["🕰️","Día del Tiempo",y=>new Date(y,9,23,0,0,0)],
+  ["❄️","Día de la Nieve",y=>new Date(y,0,18,0,0,0)],
+  ["🌈","Día del Arcoíris",y=>new Date(y,3,3,0,0,0)],
+  ["🌕","Luna Llena de Cosecha",y=>new Date(y,8,18,0,0,0)],
+  ["☄️","Lluvia de Perseidas",y=>new Date(y,7,12,0,0,0)],
+  ["🌠","Lluvia de Gemínidas",y=>new Date(y,11,13,0,0,0)],
+  ["🦕","Día de los Dinosaurios",y=>new Date(y,5,1,0,0,0)],
+  ["🦄","Día del Unicornio",y=>new Date(y,3,9,0,0,0)],
+  ["🐉","Día del Dragón",y=>new Date(y,0,16,0,0,0)],
+  ["🧙","Día de la Fantasía",y=>new Date(y,1,2,0,0,0)],
+  ["🧟","Día de los Zombis",y=>new Date(y,9,8,0,0,0)],
+  ["👽","Día del OVNI",y=>new Date(y,6,2,0,0,0)],
+  ["🏴‍☠️","Hablar como Pirata",y=>new Date(y,8,19,0,0,0)],
+  ["🎁","Día del Regalo",y=>new Date(y,6,25,0,0,0)],
+  ["🎂","Día del Pastel",y=>new Date(y,10,26,0,0,0)],
+  ["🍦","Día del Helado",y=>new Date(y,6,19,0,0,0)],
+  ["🍔","Día de la Hamburguesa",y=>new Date(y,4,28,0,0,0)],
+  ["🍟","Día de las Papas Fritas",y=>new Date(y,6,13,0,0,0)],
+  ["🍿","Día de las Palomitas",y=>new Date(y,0,19,0,0,0)],
+  ["🧀","Día del Queso",y=>new Date(y,5,4,0,0,0)],
+  ["🍓","Día de la Fresa",y=>new Date(y,4,20,0,0,0)],
+  ["🍉","Día de la Sandía",y=>new Date(y,7,3,0,0,0)],
+  ["🥑","Día de la Palta / Aguacate",y=>new Date(y,6,31,0,0,0)],
+  ["🎈","Día de los Globos",y=>new Date(y,8,13,0,0,0)],
+  ["🧸","Día del Oso de Peluche",y=>new Date(y,8,9,0,0,0)],
+  ["🧩","Día del Rompecabezas",y=>new Date(y,0,29,0,0,0)],
+  ["🎲","Día de los Juegos de Mesa",y=>new Date(y,3,11,0,0,0)],
+  ["🎯","Día del Dardo",y=>new Date(y,11,20,0,0,0)],
+  ["💤","Día del Sueño",y=>new Date(y,2,19,0,0,0)],
+  ["🌞","Día del Sol",y=>new Date(y,5,20,0,0,0)],
+  ["🌙","Día de la Luna",y=>new Date(y,6,20,0,0,0)],
+  ["⭐","Día de las Estrellas",y=>new Date(y,11,14,0,0,0)],
+  ["🌸","Día de la Amistad Global",y=>new Date(y,6,30,0,0,0)]
 ];
+
+const festDefs=rawDates.map(([emoji,name,a,b])=>({
+  emoji,name,
+  fn:typeof a==="function"?a:y=>new Date(y,a,b,0,0,0)
+}));
 
 function nextFest(fn){
   const now=new Date(),y=now.getFullYear(),t=fn(y);
@@ -149,26 +228,20 @@ function nextFest(fn){
   return t;
 }
 
-function splitEmoji(label){
-  const p=label.split(" ");
-  return {emoji:p.shift(),name:p.join(" ")};
-}
-
-let activeHero={name:"Navidad",emoji:"🎄",target:nextFest(y=>new Date(y,11,25))};
+let activeHero={name:"Navidad",emoji:"🎄",target:nextFest(y=>new Date(y,11,25,0,0,0))};
 let custom=JSON.parse(localStorage.getItem("mi_fecha")||"null");
 
 const nextSelect=document.getElementById("next-select");
 festDefs.forEach((f,idx)=>{
   const opt=document.createElement("option");
   opt.value=idx;
-  opt.textContent=f.n;
+  opt.textContent=`${f.emoji} ${f.name}`;
   nextSelect.appendChild(opt);
 });
 
 document.getElementById("btn-set-next").onclick=()=>{
   const chosen=festDefs[Number(nextSelect.value)];
-  const sp=splitEmoji(chosen.n);
-  activeHero={emoji:sp.emoji,name:sp.name,target:nextFest(chosen.fn)};
+  activeHero={emoji:chosen.emoji,name:chosen.name,target:nextFest(chosen.fn)};
   tick();
 };
 
@@ -202,27 +275,31 @@ function fmtLeft(ms){
   return `${d}d ${h}h ${m}m ${sec}s`;
 }
 
-const topBody=document.getElementById("top-body");
+const topBody=document.getElementById("top-body"),searchInp=document.getElementById("search-inp"),topCount=document.getElementById("top-count");
+searchInp.oninput=()=>renderTopTable();
+
 function renderTopTable(){
-  const list=festDefs.map(x=>{
+  const q=searchInp.value.trim().toLowerCase();
+  const sorted=festDefs.map(x=>{
     const dt=nextFest(x.fn);
     return {...x,dt,diff:dt-Date.now()};
   }).sort((a,b)=>a.diff-b.diff);
 
-  topBody.innerHTML=list.map((item,i)=>`
+  const filtered=q?sorted.filter(x=>x.name.toLowerCase().includes(q)):sorted;
+  topCount.textContent=`Mostrando ${filtered.length} de ${sorted.length} fechas festivas`;
+
+  topBody.innerHTML=filtered.map((item,i)=>`
     <tr>
       <td><b>#${i+1}</b></td>
-      <td><b>${item.n}</b><br><span style="opacity:.7;font-size:.75rem">${item.dt.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"})}</span></td>
+      <td><b>${item.emoji} ${item.name}</b><br><span style="opacity:.7;font-size:.75rem">${item.dt.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"})}</span></td>
       <td style="font-variant-numeric:tabular-nums;font-weight:700">${fmtLeft(item.diff)}</td>
-      <td><button type="button" class="pick-btn" data-idx="${i}">Usar</button></td>
+      <td><button type="button" class="pick-btn" data-ts="${item.dt.getTime()}" data-emoji="${item.emoji}" data-name="${item.name.replace(/"/g,'&quot;')}">Usar</button></td>
     </tr>
   `).join("");
 
   topBody.querySelectorAll(".pick-btn").forEach(btn=>{
     btn.onclick=()=>{
-      const chosen=list[Number(btn.dataset.idx)];
-      const sp=splitEmoji(chosen.n);
-      activeHero={emoji:sp.emoji,name:sp.name,target:chosen.dt};
+      activeHero={emoji:btn.dataset.emoji,name:btn.dataset.name,target:new Date(Number(btn.dataset.ts))};
       tabHome.click();
       tick();
     };
@@ -258,4 +335,5 @@ function tick(){
 renderCustom();tick();setInterval(tick,1000);
 </script>
 </body>
-</html>
+  </html>
+  
