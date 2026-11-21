@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cronómetro & Mejores Fechas</title>
+<title>Cronómetro & 20 Mejores Fechas</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
 body{min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:18px;background:linear-gradient(135deg,#450a0a,#7f1d1d,#064e3b);color:#fff;padding:18px 14px 36px;text-align:center}
-.topbar{width:100%;max-width:620px;display:flex;gap:10px;padding:8px;border-radius:18px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);box-shadow:0 10px 25px rgba(0,0,0,.35)}
+.topbar{width:100%;max-width:640px;display:flex;gap:10px;padding:8px;border-radius:18px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);box-shadow:0 10px 25px rgba(0,0,0,.35)}
 .nav-btn{flex:1;padding:11px 12px;border-radius:13px;border:none;font-size:.9rem;font-weight:800;cursor:pointer;transition:.2s}
 .nav-main{background:rgba(255,255,255,.14);color:#fff}
 .nav-top{background:linear-gradient(90deg,#f59e0b,#ec4899,#8b5cf6);color:#fff;box-shadow:0 4px 15px rgba(236,72,153,.35)}
 .nav-btn.active{outline:2px solid #fff;transform:scale(1.01)}
-.wrap{width:100%;max-width:620px;display:flex;flex-direction:column;gap:20px}
+.wrap{width:100%;max-width:640px;display:flex;flex-direction:column;gap:20px}
 .card{width:100%;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.16);border-radius:24px;padding:20px 14px}
 .emoji{font-size:3rem;margin-bottom:6px}
 h1{font-size:1.85rem;margin-bottom:4px}
@@ -24,16 +24,20 @@ h2{font-size:1.25rem;margin-bottom:4px}
 .num{display:block;font-size:1.9rem;font-weight:800;font-variant-numeric:tabular-nums}
 .lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:1.4px;opacity:.75;margin-top:4px}
 .msg{margin-top:12px;font-size:1rem;font-weight:700;display:none}
-form{display:flex;flex-direction:column;gap:10px;margin-top:8px}
-input,.act-btn{padding:11px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.25);font-size:.93rem}
+.next-box{margin-top:14px;padding:14px;border-radius:16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.24);display:none}
+.next-box p{font-weight:800;font-size:1rem;margin-bottom:10px}
+.next-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+select,input,.act-btn{padding:11px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.25);font-size:.92rem}
+select{background:#1f2937;color:#fff;flex:1;min-width:190px}
 input{background:rgba(255,255,255,.12);color:#fff}
 input::placeholder{color:rgba(255,255,255,.65)}
+form{display:flex;flex-direction:column;gap:10px;margin-top:8px}
 .act-btn{background:#10b981;color:#052e16;font-weight:800;border:none;cursor:pointer}
 .btn-del{margin-top:12px;background:rgba(255,255,255,.16);color:#fff;font-size:.82rem;padding:8px 14px;border:none;border-radius:10px;cursor:pointer}
 .table-wrap{width:100%;overflow-x:auto;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.14)}
-table{width:100%;border-collapse:collapse;font-size:.85rem}
-th,td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.1);text-align:left}
-th{background:rgba(255,255,255,.1);font-size:.75rem;text-transform:uppercase;letter-spacing:1px}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th,td{padding:9px 8px;border-bottom:1px solid rgba(255,255,255,.1);text-align:left}
+th{background:rgba(255,255,255,.1);font-size:.74rem;text-transform:uppercase;letter-spacing:1px}
 .pick-btn{padding:6px 9px;border-radius:8px;border:none;background:#fbbf24;color:#1f2937;font-weight:800;font-size:.75rem;cursor:pointer;white-space:nowrap}
 .hidden{display:none}
 </style>
@@ -56,7 +60,14 @@ th{background:rgba(255,255,255,.1);font-size:.75rem;text-transform:uppercase;let
       <div class="box"><span class="num" id="nm">00</span><div class="lbl">Minutos</div></div>
       <div class="box"><span class="num" id="ns">00</span><div class="lbl">Segundos</div></div>
     </div>
-    <div class="msg" id="m-nav">¡Llegó el día! 🎉</div>
+    <div class="msg" id="m-nav">¡Llegó el momento! 🎉</div>
+    <div class="next-box" id="next-box">
+      <p>¿Cuál deseas poner para tu próxima fecha?</p>
+      <div class="next-row">
+        <select id="next-select"></select>
+        <button type="button" class="act-btn" id="btn-set-next">Poner fecha</button>
+      </div>
+    </div>
   </section>
 
   <section class="card">
@@ -90,7 +101,7 @@ th{background:rgba(255,255,255,.1);font-size:.75rem;text-transform:uppercase;let
   <section class="card">
     <div class="emoji">🏆</div>
     <h1>Las Mejores Fechas</h1>
-    <p class="sub">10 fechas destacadas ordenadas por cercanía</p>
+    <p class="sub">20 fechas festivas ordenadas por cercanía</p>
     <div class="table-wrap">
       <table>
         <thead>
@@ -103,38 +114,68 @@ th{background:rgba(255,255,255,.1);font-size:.75rem;text-transform:uppercase;let
 </div>
 
 <script>
-const topDefs=[
-  {n:"🎆 Año Nuevo",m:0,d:1},
-  {n:"💘 San Valentín",m:1,d:14},
-  {n:"🌍 Día de la Tierra",m:3,d:22},
-  {n:"⭐ Star Wars Day",m:4,d:4},
-  {n:"🎮 Día del Gamer",m:7,d:29},
-  {n:"🎃 Halloween",m:9,d:31},
-  {n:"🦃 Día de Gracias",m:10,d:26},
-  {n:"🛍️ Black Friday",m:10,d:27},
-  {n:"🎄 Navidad",m:11,d:25},
-  {n:"🥂 Fin de Año",m:11,d:31}
-];
-
-function nextOccur(m,d){
-  const now=new Date(),y=now.getFullYear(),t=new Date(y,m,d,0,0,0);
-  return now>=t?new Date(y+1,m,d,0,0,0):t;
+function easterDate(y){
+  const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31)-1,da=((h+l-7*m+114)%31)+1;
+  return new Date(y,mo,da,0,0,0);
 }
 
-let activeHero={name:"Navidad",emoji:"🎄",target:nextOccur(11,25)};
+const festDefs=[
+  {n:"🎆 Año Nuevo",fn:y=>new Date(y,0,1)},
+  {n:"👑 Día de Reyes",fn:y=>new Date(y,0,6)},
+  {n:"💘 San Valentín",fn:y=>new Date(y,1,14)},
+  {n:"🌷 Día de la Mujer",fn:y=>new Date(y,2,8)},
+  {n:"☘️ San Patricio",fn:y=>new Date(y,2,17)},
+  {n:"🐰 Pascua",fn:y=>easterDate(y)},
+  {n:"🌍 Día de la Tierra",fn:y=>new Date(y,3,22)},
+  {n:"🌼 Día del Trabajo",fn:y=>new Date(y,4,1)},
+  {n:"⭐ Star Wars Day",fn:y=>new Date(y,4,4)},
+  {n:"🌺 Día de las Madres",fn:y=>new Date(y,4,10)},
+  {n:"🏳️‍🌈 Orgullo",fn:y=>new Date(y,5,28)},
+  {n:"🤝 Día de la Amistad",fn:y=>new Date(y,6,20)},
+  {n:"🎂 Día del Niño",fn:y=>new Date(y,7,16)},
+  {n:"🎮 Día del Gamer",fn:y=>new Date(y,7,29)},
+  {n:"🍂 Equinoccio de Otoño",fn:y=>new Date(y,8,22)},
+  {n:"🎃 Halloween",fn:y=>new Date(y,9,31)},
+  {n:"🦃 Día de Gracias",fn:y=>{const f=new Date(y,10,1);return new Date(y,10,1+((4-f.getDay()+7)%7)+21)}},
+  {n:"🛍️ Black Friday",fn:y=>{const f=new Date(y,10,1);return new Date(y,10,1+((4-f.getDay()+7)%7)+22)}},
+  {n:"🎄 Navidad",fn:y=>new Date(y,11,25)},
+  {n:"🥂 Fin de Año",fn:y=>new Date(y,11,31)}
+];
+
+function nextFest(fn){
+  const now=new Date(),y=now.getFullYear(),t=fn(y);
+  t.setHours(0,0,0,0);
+  if(now>=t){const nx=fn(y+1);nx.setHours(0,0,0,0);return nx}
+  return t;
+}
+
+function splitEmoji(label){
+  const p=label.split(" ");
+  return {emoji:p.shift(),name:p.join(" ")};
+}
+
+let activeHero={name:"Navidad",emoji:"🎄",target:nextFest(y=>new Date(y,11,25))};
 let custom=JSON.parse(localStorage.getItem("mi_fecha")||"null");
+
+const nextSelect=document.getElementById("next-select");
+festDefs.forEach((f,idx)=>{
+  const opt=document.createElement("option");
+  opt.value=idx;
+  opt.textContent=f.n;
+  nextSelect.appendChild(opt);
+});
+
+document.getElementById("btn-set-next").onclick=()=>{
+  const chosen=festDefs[Number(nextSelect.value)];
+  const sp=splitEmoji(chosen.n);
+  activeHero={emoji:sp.emoji,name:sp.name,target:nextFest(chosen.fn)};
+  tick();
+};
 
 const viewHome=document.getElementById("view-home"),viewTop=document.getElementById("view-top");
 const tabHome=document.getElementById("tab-home"),tabTop=document.getElementById("tab-top");
-
-tabHome.onclick=()=>{
-  viewHome.classList.remove("hidden");viewTop.classList.add("hidden");
-  tabHome.classList.add("active");tabTop.classList.remove("active");
-};
-tabTop.onclick=()=>{
-  viewTop.classList.remove("hidden");viewHome.classList.add("hidden");
-  tabTop.classList.add("active");tabHome.classList.remove("active");
-};
+tabHome.onclick=()=>{viewHome.classList.remove("hidden");viewTop.classList.add("hidden");tabHome.classList.add("active");tabTop.classList.remove("active")};
+tabTop.onclick=()=>{viewTop.classList.remove("hidden");viewHome.classList.add("hidden");tabTop.classList.add("active");tabHome.classList.remove("active")};
 
 const formBox=document.getElementById("form-box"),customBox=document.getElementById("custom-box");
 function renderCustom(){
@@ -163,15 +204,15 @@ function fmtLeft(ms){
 
 const topBody=document.getElementById("top-body");
 function renderTopTable(){
-  const list=topDefs.map(x=>{
-    const dt=nextOccur(x.m,x.d);
+  const list=festDefs.map(x=>{
+    const dt=nextFest(x.fn);
     return {...x,dt,diff:dt-Date.now()};
   }).sort((a,b)=>a.diff-b.diff);
 
   topBody.innerHTML=list.map((item,i)=>`
     <tr>
       <td><b>#${i+1}</b></td>
-      <td><b>${item.n}</b><br><span style="opacity:.7;font-size:.76rem">${item.dt.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"})}</span></td>
+      <td><b>${item.n}</b><br><span style="opacity:.7;font-size:.75rem">${item.dt.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"})}</span></td>
       <td style="font-variant-numeric:tabular-nums;font-weight:700">${fmtLeft(item.diff)}</td>
       <td><button type="button" class="pick-btn" data-idx="${i}">Usar</button></td>
     </tr>
@@ -180,18 +221,24 @@ function renderTopTable(){
   topBody.querySelectorAll(".pick-btn").forEach(btn=>{
     btn.onclick=()=>{
       const chosen=list[Number(btn.dataset.idx)];
-      const parts=chosen.n.split(" ");
-      activeHero={emoji:parts.shift(),name:parts.join(" "),target:chosen.dt};
+      const sp=splitEmoji(chosen.n);
+      activeHero={emoji:sp.emoji,name:sp.name,target:chosen.dt};
       tabHome.click();
       tick();
     };
   });
 }
 
-function updateBox(target,p,msgId){
-  const diff=target-Date.now(),msg=document.getElementById(msgId);
-  if(diff<=0){["d","h","m","s"].forEach(k=>document.getElementById(p+k).textContent="00");msg.style.display="block";return}
+function updateBox(target,p,msgId,nextId){
+  const diff=target-Date.now(),msg=document.getElementById(msgId),nb=nextId?document.getElementById(nextId):null;
+  if(diff<=0){
+    ["d","h","m","s"].forEach(k=>document.getElementById(p+k).textContent="00");
+    msg.style.display="block";
+    if(nb)nb.style.display="block";
+    return;
+  }
   msg.style.display="none";
+  if(nb)nb.style.display="none";
   const s=Math.floor(diff/1000);
   document.getElementById(p+"d").textContent=String(Math.floor(s/86400)).padStart(2,"0");
   document.getElementById(p+"h").textContent=String(Math.floor(s%86400/3600)).padStart(2,"0");
@@ -203,8 +250,8 @@ function tick(){
   document.getElementById("hero-emoji").textContent=activeHero.emoji;
   document.getElementById("hero-title").textContent=activeHero.name;
   document.getElementById("f-nav").textContent=activeHero.target.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-  updateBox(activeHero.target,"n","m-nav");
-  if(custom)updateBox(custom.ts,"c","m-cus");
+  updateBox(activeHero.target,"n","m-nav","next-box");
+  if(custom)updateBox(custom.ts,"c","m-cus",null);
   renderTopTable();
 }
 
