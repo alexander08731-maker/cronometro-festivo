@@ -52,20 +52,18 @@ th{position:sticky;top:0;background:#1f1624;font-size:.74rem;text-transform:uppe
 </style>
 </head>
 <body>
-
 <header class="topbar">
   <button type="button" id="tab-home" class="nav-btn nav-main active">⏳ Cronómetros</button>
   <button type="button" id="tab-top" class="nav-btn nav-top">🏆 Las Mejores Fechas</button>
-  <button type="button" id="btn-theme" class="nav-btn nav-mini" title="Cambiar fondo">🌗 Tema</button>
-  <button type="button" id="btn-copy" class="nav-btn nav-mini" title="Copiar enlace">🔗 Copiar</button>
+  <button type="button" id="btn-theme" class="nav-btn nav-mini">🌗 Tema</button>
+  <button type="button" id="btn-copy" class="nav-btn nav-mini">🔗 Copiar</button>
 </header>
-
 <div id="view-home" class="wrap">
   <section class="card" id="hero-card">
     <div class="emoji" id="hero-emoji">🎄</div>
     <h1 id="hero-title">Navidad</h1>
     <p class="sub" id="f-nav">25 de diciembre</p>
-    <div class="info-tag" id="hero-info">Celebración clásica de fin de año en familia.</div>
+    <div class="info-tag" id="hero-info">Celebración clásica de fin de año y encuentro familiar.</div>
     <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
     <div class="grid">
       <div class="box"><span class="num" id="nd">00</span><div class="lbl">Días</div></div>
@@ -82,7 +80,6 @@ th{position:sticky;top:0;background:#1f1624;font-size:.74rem;text-transform:uppe
       </div>
     </div>
   </section>
-
   <section class="card">
     <div id="form-box">
       <h2>✨ Agregar una fecha</h2>
@@ -93,7 +90,6 @@ th{position:sticky;top:0;background:#1f1624;font-size:.74rem;text-transform:uppe
         <button type="submit" class="act-btn">Guardar fecha</button>
       </form>
     </div>
-
     <div id="custom-box" class="hidden">
       <div class="emoji" style="font-size:2.3rem">✨</div>
       <h2 id="c-title">Mi Evento</h2>
@@ -109,7 +105,6 @@ th{position:sticky;top:0;background:#1f1624;font-size:.74rem;text-transform:uppe
     </div>
   </section>
 </div>
-
 <div id="view-top" class="wrap hidden">
   <section class="card">
     <div class="emoji">🏆</div>
@@ -120,30 +115,18 @@ th{position:sticky;top:0;background:#1f1624;font-size:.74rem;text-transform:uppe
     </div>
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr><th>#</th><th>Fecha</th><th>Falta</th><th>Ver</th></tr>
-        </thead>
+        <thead><tr><th>#</th><th>Fecha</th><th>Falta</th><th>Ver</th></tr></thead>
         <tbody id="top-body"></tbody>
       </table>
     </div>
   </section>
 </div>
-
-<footer class="ver-foot" id="ver-label">V. 3.0</footer>
-
+<footer class="ver-foot" id="ver-label">V. 3.1</footer>
 <script>
-const APP_VERSION="V. 3.0";
+const APP_VERSION="V. 3.1";
 document.getElementById("ver-label").textContent=APP_VERSION;
-
-function easterDate(y){
-  const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31)-1,da=((h+l-7*m+114)%31)+1;
-  return new Date(y,mo,da,0,0,0);
-}
-function nthWeekday(y,m,wd,n){
-  const f=new Date(y,m,1,0,0,0),off=(wd-f.getDay()+7)%7;
-  return new Date(y,m,1+off+(n-1)*7,0,0,0);
-}
-
+function easterDate(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31)-1,da=((h+l-7*m+114)%31)+1;return new Date(y,mo,da,0,0,0)}
+function nthWeekday(y,m,wd,n){const f=new Date(y,m,1,0,0,0),off=(wd-f.getDay()+7)%7;return new Date(y,m,1+off+(n-1)*7,0,0,0)}
 const top15Raw=[
   ["🎄","Navidad",11,25,true,"Celebración clásica de fin de año y encuentro familiar."],
   ["🎆","Año Nuevo",0,1,true,"Inicio oficial del nuevo ciclo en el calendario."],
@@ -161,7 +144,6 @@ const top15Raw=[
   ["🎃","Halloween",9,31,true,"Noche de disfraces, calabazas y temática misteriosa."],
   ["🥂","Fin de Año",11,31,true,"Último día del año para despedir el ciclo actual."]
 ];
-
 const extraHispanosRaw=[
   ["🐣","Lunes de Pascua",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()+1,0,0,0)},"Día siguiente al Domingo de Pascua."],
   ["🙏","Viernes Santo",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()-2,0,0,0)},"Fecha tradicional de Semana Santa."],
@@ -261,150 +243,51 @@ const extraHispanosRaw=[
   ["🇻🇪","Firma del Acta de Independencia (Venezuela)",6,5,"Fecha patria de Venezuela."],
   ["🇻🇪","Natalicio de Simón Bolívar (Venezuela)",6,24,"Conmemoración en Venezuela."]
 ];
-
-function mapDateItem(row, isTopDefault){
-  const [emoji,name,a,b,info]=row;
-  return {
-    emoji,
-    name,
-    info:info||"Fecha destacada del calendario hispano.",
-    isTopDefault:Boolean(isTopDefault),
-    fn:typeof a==="function"?a:y=>new Date(y,a,b,0,0,0)
-  };
-}
-
+  function mapDateItem(row,isTopDefault){const[emoji,name,a,b,info]=row;return{emoji,name,info:info||"Fecha destacada del calendario hispano.",isTopDefault:Boolean(isTopDefault),fn:typeof a==="function"?a:y=>new Date(y,a,b,0,0,0)}}
 const top15List=top15Raw.map(r=>mapDateItem(r,true));
 const allDatesList=[...top15List,...extraHispanosRaw.map(r=>mapDateItem(r,false))];
-
-function normText(str){
-  return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9@\s]/g," ").replace(/\s+/g," ").trim();
-}
-
-function nextFest(fn){
-  const now=new Date(),y=now.getFullYear(),t=fn(y);
-  t.setHours(0,0,0,0);
-  if(now>=t){const nx=fn(y+1);nx.setHours(0,0,0,0);return nx}
-  return t;
-}
-
+function normText(str){return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9@\s]/g," ").replace(/\s+/g," ").trim()}
+function nextFest(fn){const now=new Date(),y=now.getFullYear(),t=fn(y);t.setHours(0,0,0,0);if(now>=t){const nx=fn(y+1);nx.setHours(0,0,0,0);return nx}return t}
 let activeHero={name:"Navidad",emoji:"🎄",info:"Celebración clásica de fin de año y encuentro familiar.",target:nextFest(y=>new Date(y,11,25,0,0,0))};
 let custom=JSON.parse(localStorage.getItem("mi_fecha")||"null");
-
 if(localStorage.getItem("tema_neon")==="1")document.body.classList.add("neon");
-document.getElementById("btn-theme").onclick=()=>{
-  document.body.classList.toggle("neon");
-  localStorage.setItem("tema_neon",document.body.classList.contains("neon")?"1":"0");
-};
-
+document.getElementById("btn-theme").onclick=()=>{document.body.classList.toggle("neon");localStorage.setItem("tema_neon",document.body.classList.contains("neon")?"1":"0")};
 const btnCopy=document.getElementById("btn-copy");
-btnCopy.onclick=async()=>{
-  try{await navigator.clipboard.writeText(location.href)}catch(_){}
-  btnCopy.textContent="✅ Copiado";
-  setTimeout(()=>{btnCopy.textContent="🔗 Copiar"},1400);
-};
-
+btnCopy.onclick=async()=>{try{await navigator.clipboard.writeText(location.href)}catch(_){}btnCopy.textContent="✅ Copiado";setTimeout(()=>{btnCopy.textContent="🔗 Copiar"},1400)};
 const nextSelect=document.getElementById("next-select");
-allDatesList.forEach((f,idx)=>{
-  const opt=document.createElement("option");
-  opt.value=idx;
-  opt.textContent=`${f.emoji} ${f.name}`;
-  nextSelect.appendChild(opt);
-});
-
-document.getElementById("btn-set-next").onclick=()=>{
-  const chosen=allDatesList[Number(nextSelect.value)];
-  activeHero={emoji:chosen.emoji,name:chosen.name,info:chosen.info,target:nextFest(chosen.fn)};
-  tick();
-};
-
+allDatesList.forEach((f,idx)=>{const opt=document.createElement("option");opt.value=idx;opt.textContent=`${f.emoji} ${f.name}`;nextSelect.appendChild(opt)});
+document.getElementById("btn-set-next").onclick=()=>{const chosen=allDatesList[Number(nextSelect.value)];activeHero={emoji:chosen.emoji,name:chosen.name,info:chosen.info,target:nextFest(chosen.fn)};tick()};
 const viewHome=document.getElementById("view-home"),viewTop=document.getElementById("view-top");
 const tabHome=document.getElementById("tab-home"),tabTop=document.getElementById("tab-top");
 tabHome.onclick=()=>{viewHome.classList.remove("hidden");viewTop.classList.add("hidden");tabHome.classList.add("active");tabTop.classList.remove("active")};
 tabTop.onclick=()=>{viewTop.classList.remove("hidden");viewHome.classList.add("hidden");tabTop.classList.add("active");tabHome.classList.remove("active")};
-
 const formBox=document.getElementById("form-box"),customBox=document.getElementById("custom-box");
-function renderCustom(){
-  if(!custom){formBox.classList.remove("hidden");customBox.classList.add("hidden");return}
-  formBox.classList.add("hidden");customBox.classList.remove("hidden");
-  document.getElementById("c-title").textContent=custom.name;
-  document.getElementById("f-cus").textContent=new Date(custom.ts).toLocaleString("es-ES",{dateStyle:"long",timeStyle:"short"});
-}
-
-document.getElementById("form").onsubmit=e=>{
-  e.preventDefault();
-  const name=document.getElementById("inp-name").value.trim();
-  const ts=new Date(document.getElementById("inp-date").value).getTime();
-  if(!name||isNaN(ts))return;
-  custom={name,ts};
-  localStorage.setItem("mi_fecha",JSON.stringify(custom));
-  renderCustom();tick();
-};
+function renderCustom(){if(!custom){formBox.classList.remove("hidden");customBox.classList.add("hidden");return}formBox.classList.add("hidden");customBox.classList.remove("hidden");document.getElementById("c-title").textContent=custom.name;document.getElementById("f-cus").textContent=new Date(custom.ts).toLocaleString("es-ES",{dateStyle:"long",timeStyle:"short"})}
+document.getElementById("form").onsubmit=e=>{e.preventDefault();const name=document.getElementById("inp-name").value.trim();const ts=new Date(document.getElementById("inp-date").value).getTime();if(!name||isNaN(ts))return;custom={name,ts};localStorage.setItem("mi_fecha",JSON.stringify(custom));renderCustom();tick()};
 document.getElementById("btn-del").onclick=()=>{localStorage.removeItem("mi_fecha");custom=null;renderCustom()};
-
-function fmtLeft(ms){
-  if(ms<=0)return"¡Hoy!";
-  const s=Math.floor(ms/1000),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),sec=s%60;
-  return `${d}d ${h}h ${m}m ${sec}s`;
-}
-
+function fmtLeft(ms){if(ms<=0)return"¡Hoy!";const s=Math.floor(ms/1000),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),sec=s%60;return`${d}d ${h}h ${m}m ${sec}s`}
 const topBody=document.getElementById("top-body"),searchInp=document.getElementById("search-inp"),topCount=document.getElementById("top-count");
 searchInp.oninput=()=>renderTopTable();
-
 function renderTopTable(){
   const q=normText(searchInp.value);
   const pool=q?allDatesList:top15List;
-  const rows=pool.map(x=>{
-    const dt=nextFest(x.fn);
-    return {...x,dt,diff:dt-Date.now()};
-  }).sort((a,b)=>a.diff-b.diff).filter(x=>!q||normText(`${x.name} ${x.info}`).includes(q));
-
-  topCount.textContent=q
-    ? `Resultados encontrados: ${rows.length} (catálogo Latam e hispano)`
-    : `Top ${rows.length} fechas principales • Escribe en el buscador para explorar más`;
-
-  topBody.innerHTML=rows.map((item,i)=>`
-    <tr>
-      <td><b>#${i+1}</b></td>
-      <td><b>${item.emoji} ${item.name}</b>${item.isTopDefault && !q?'<span class="badge">Top</span>':''}<br><span style="opacity:.7;font-size:.75rem">${item.dt.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"})}</span></td>
-      <td style="font-variant-numeric:tabular-nums;font-weight:700">${fmtLeft(item.diff)}</td>
-      <td><button type="button" class="pick-btn" data-ts="${item.dt.getTime()}" data-emoji="${item.emoji}" data-name="${item.name.replace(/"/g,'&quot;')}" data-info="${item.info.replace(/"/g,'&quot;')}">Usar</button></td>
-    </tr>
-  `).join("");
-
-  topBody.querySelectorAll(".pick-btn").forEach(btn=>{
-    btn.onclick=()=>{
-      activeHero={emoji:btn.dataset.emoji,name:btn.dataset.name,info:btn.dataset.info,target:new Date(Number(btn.dataset.ts))};
-      tabHome.click();
-      tick();
-    };
-  });
+  const rows=pool.map(x=>{const dt=nextFest(x.fn);return{...x,dt,diff:dt-Date.now()}}).sort((a,b)=>a.diff-b.diff).filter(x=>!q||normText(`${x.name} ${x.info}`).includes(q));
+  topCount.textContent=q?`Resultados encontrados: ${rows.length} (catálogo Latam e hispano)`:`Top ${rows.length} fechas principales • Escribe en el buscador para explorar más`;
+  topBody.innerHTML=rows.map((item,i)=>`<tr><td><b>#${i+1}</b></td><td><b>${item.emoji} ${item.name}</b>${item.isTopDefault&&!q?'<span class="badge">Top</span>':''}<br><span style="opacity:.7;font-size:.75rem">${item.dt.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"})}</span></td><td style="font-variant-numeric:tabular-nums;font-weight:700">${fmtLeft(item.diff)}</td><td><button type="button" class="pick-btn" data-ts="${item.dt.getTime()}" data-emoji="${item.emoji}" data-name="${item.name.replace(/"/g,'&quot;')}" data-info="${item.info.replace(/"/g,'&quot;')}">Usar</button></td></tr>`).join("");
+  topBody.querySelectorAll(".pick-btn").forEach(btn=>{btn.onclick=()=>{activeHero={emoji:btn.dataset.emoji,name:btn.dataset.name,info:btn.dataset.info,target:new Date(Number(btn.dataset.ts))};tabHome.click();tick()}});
 }
-
 function updateBox(target,p,msgId,nextId,cardEl,progEl){
   const diff=target-Date.now(),msg=document.getElementById(msgId),nb=nextId?document.getElementById(nextId):null;
-  if(progEl){
-    const yearMs=365*86400*1000;
-    const pct=diff<=0?100:Math.max(0,Math.min(100,((yearMs-Math.min(diff,yearMs))/yearMs)*100));
-    progEl.style.width=pct.toFixed(1)+"%";
-  }
-  if(cardEl){
-    cardEl.classList.toggle("soon",diff<=7*86400*1000);
-  }
-  if(diff<=0){
-    ["d","h","m","s"].forEach(k=>document.getElementById(p+k).textContent="00");
-    msg.style.display="block";
-    if(nb)nb.style.display="block";
-    return;
-  }
-  msg.style.display="none";
-  if(nb)nb.style.display="none";
+  if(progEl){const yearMs=365*86400*1000;const pct=diff<=0?100:Math.max(0,Math.min(100,((yearMs-Math.min(diff,yearMs))/yearMs)*100));progEl.style.width=pct.toFixed(1)+"%"}
+  if(cardEl){cardEl.classList.toggle("soon",diff<=7*86400*1000)}
+  if(diff<=0){["d","h","m","s"].forEach(k=>document.getElementById(p+k).textContent="00");msg.style.display="block";if(nb)nb.style.display="block";return}
+  msg.style.display="none";if(nb)nb.style.display="none";
   const s=Math.floor(diff/1000);
   document.getElementById(p+"d").textContent=String(Math.floor(s/86400)).padStart(2,"0");
   document.getElementById(p+"h").textContent=String(Math.floor(s%86400/3600)).padStart(2,"0");
   document.getElementById(p+"m").textContent=String(Math.floor(s%3600/60)).padStart(2,"0");
   document.getElementById(p+"s").textContent=String(s%60).padStart(2,"0");
 }
-
 function tick(){
   document.getElementById("hero-emoji").textContent=activeHero.emoji;
   document.getElementById("hero-title").textContent=activeHero.name;
@@ -414,7 +297,6 @@ function tick(){
   if(custom)updateBox(custom.ts,"c","m-cus",null,null,null);
   renderTopTable();
 }
-
 renderCustom();tick();setInterval(tick,1000);
 </script>
 </body>
