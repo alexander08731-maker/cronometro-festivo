@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cronómetro & +100 Fechas</title>
+<title>Cronómetro & Fechas Hispanas</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
 body{min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:18px;background:linear-gradient(135deg,#450a0a,#7f1d1d,#064e3b);color:#fff;padding:18px 14px 36px;text-align:center}
@@ -40,6 +40,7 @@ table{width:100%;border-collapse:collapse;font-size:.84rem}
 th,td{padding:9px 8px;border-bottom:1px solid rgba(255,255,255,.1);text-align:left}
 th{position:sticky;top:0;background:#2a0b0e;font-size:.74rem;text-transform:uppercase;letter-spacing:1px;z-index:1}
 .pick-btn{padding:6px 9px;border-radius:8px;border:none;background:#fbbf24;color:#1f2937;font-weight:800;font-size:.75rem;cursor:pointer;white-space:nowrap}
+.badge{display:inline-block;font-size:.68rem;padding:2px 6px;border-radius:999px;background:rgba(255,255,255,.14);opacity:.85;margin-left:4px}
 .hidden{display:none}
 </style>
 </head>
@@ -102,9 +103,9 @@ th{position:sticky;top:0;background:#2a0b0e;font-size:.74rem;text-transform:uppe
   <section class="card">
     <div class="emoji">🏆</div>
     <h1>Las Mejores Fechas</h1>
-    <p class="sub" id="top-count">Cargando fechas...</p>
+    <p class="sub" id="top-count">Top 15 principales • Busca fechas de Latam e hispanohablantes</p>
     <div class="search-box">
-      <input type="search" id="search-inp" placeholder="🔍 Buscar fecha (ej. Halloween, Pascua, Navidad...)">
+      <input type="search" id="search-inp" placeholder="🔍 Buscar país o fecha (ej. Chile, México, Argentina, Pascua...)">
     </div>
     <div class="table-wrap">
       <table>
@@ -127,99 +128,164 @@ function nthWeekday(y,m,wd,n){
   return new Date(y,m,1+off+(n-1)*7,0,0,0);
 }
 
-const rawDates=[
-  ["🎆","Año Nuevo",0,1],["👑","Día de Reyes",0,6],["📚","Día Mundial de la Educación",0,24],["🎗️","Día contra el Cáncer",1,4],["💘","San Valentín",1,14],["🗣️","Día de la Lengua Materna",1,21],
-  ["🌷","Día de la Mujer",2,8],["🔢","Día de Pi",2,14],["☘️","San Patricio",2,17],["😄","Día de la Felicidad",2,20],["🌳","Día de los Bosques",2,21],["💧","Día del Agua",2,22],["🌤️","Equinoccio de Marzo",2,20],
-  ["😂","Día de las Bromas",3,1],["📚","Día del Libro",3,23],["🌍","Día de la Tierra",3,22],["🐾","Día del Animal",3,29],["🎶","Día del Jazz",3,30],
-  ["🌼","Día del Trabajo",4,1],["📰","Libertad de Prensa",4,3],["⭐","Star Wars Day",4,4],["🌮","Cinco de Mayo",4,5],["🌺","Día de las Madres",4,10],["👨‍👩‍👧","Día de la Familia",4,15],["🐝","Día de las Abejas",4,20],["🦒","Día de la Jirafa",4,21],["🐢","Día de la Tortuga",4,23],[" nerd","Día del Friki",4,25],
-  ["🌱","Día del Medio Ambiente",5,5],["🌊","Día de los Océanos",5,8],["🎵","Día de la Música",5,21],["☀️","Solsticio de Junio",5,21],["🏳️‍🌈","Día del Orgullo",5,28],["📱","Día de las Redes Sociales",5,30],
-  ["🌐","Día de Internet",6,17],["🤝","Día de la Amistad",6,20],["🧘","Día del Yoga",6,21],["🐬","Día de los Delfines",6,23],["🐯","Día del Tigre",6,29],
-  ["🍺","Día de la Cerveza",7,1],["🐱","Día del Gato",7,8],["🏖️","Día de la Playa",7,11],["🐘","Día del Elefante",7,12],["📸","Día de la Fotografía",7,19],["🐶","Día del Perro",7,26],["🎮","Día del Gamer",7,29],
-  ["🌻","Día de la Primavera / Flores",8,21],["🍂","Equinoccio de Septiembre",8,22],["🌎","Día del Turismo",8,27],["☕","Día del Café",9,1],["🎶","Día de la Música",9,1],["🐾","Día de los Animales",9,4],["🧠","Salud Mental",9,10],["👧","Día de la Niña",9,11],["🏛️","Día de la Hispanidad",9,12],["💻","Día del Programador",9,13],["🍽️","Día de la Alimentación",9,16],["🎃","Halloween",9,31],
-  ["🕊️","Día de Todos los Santos",10,1],["💀","Día de Muertos",10,2],["📝","Día del Soltero",10,11],["🎉","Día de la Música",10,22],["🛍️","Black Friday",10,27],["💻","Cyber Monday",10,30],
-  ["🎗️","Día contra el SIDA",11,1],["🦸","Día de los Superhéroes",11,4],["🥷","Día de los Ninjas",11,5],["🏔️","Día de las Montañas",11,11],["🍵","Día del Té",11,15],["☀️","Solsticio de Diciembre",11,21],["🎄","Nochebuena",11,24],["🎅","Navidad",11,25],["🥂","Fin de Año",11,31],
-  ["🐰","Domingo de Pascua",y=>easterDate(y)],
+// Top 15 fechas principales (se muestran por defecto en la tabla)
+const top15Raw=[
+  ["🎄","Navidad",11,25,true],
+  ["🎆","Año Nuevo",0,1,true],
+  ["👑","Día de Reyes",0,6,true],
+  ["💘","San Valentín / Día del Amor",1,14,true],
+  ["🌷","Día de la Mujer",2,8,true],
+  ["🐰","Domingo de Pascua",y=>easterDate(y),null,true],
+  ["🌍","Día de la Tierra",3,22,true],
+  ["🌼","Día del Trabajo",4,1,true],
+  ["🌺","Día de las Madres",y=>nthWeekday(y,4,0,2),null,true],
+  ["👔","Día del Padre",y=>nthWeekday(y,5,0,3),null,true],
+  ["🤝","Día de la Amistad",6,20,true],
+  ["🎂","Día del Niñ@",7,16,true],
+  ["🏛️","Día de la Hispanidad",9,12,true],
+  ["🎃","Halloween",9,31,true],
+  ["🥂","Fin de Año",11,31,true]
+];
+
+// Catálogo amplio de búsqueda: Latam y países de habla hispana (sin EE.UU., Francia, India, etc.)
+const extraHispanosRaw=[
+  // Generales / culturales / efemérides hispanas
   ["🐣","Lunes de Pascua",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()+1,0,0,0)}],
   ["🙏","Viernes Santo",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()-2,0,0,0)}],
   ["🎭","Martes de Carnaval",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()-47,0,0,0)}],
-  ["🦃","Día de Acción de Gracias",y=>nthWeekday(y,10,4,4)],
-  ["💝","Día de las Madres (EE.UU.)",y=>nthWeekday(y,4,0,2)],
-  ["👔","Día del Padre (EE.UU.)",y=>nthWeekday(y,5,0,3)],
-  ["🇺🇸","Memorial Day",y=>{const d=new Date(y,4,31,0,0,0);while(d.getDay()!==1)d.setDate(d.getDate()-1);return d}],
-  ["🛠️","Labor Day (EE.UU.)",y=>nthWeekday(y,8,1,1)],
-  ["🗳️","Día de Elecciones (EE.UU.)",y=>{const d=new Date(y,10,1,0,0,0);while(d.getDay()!==1)d.setDate(d.getDate()+1);d.setDate(d.getDate()+1);return d}],
-  ["🕯️","Hanukkah (Inicio ref.)",y=>new Date(y,11,15,0,0,0)],
-  ["🪔","Diwali (Ref.)",y=>new Date(y,9,20,0,0,0)],
-  ["🧧","Año Nuevo Chino (Ref.)",y=>new Date(y,1,10,0,0,0)],
-  ["🌙","Ramadán (Ref.)",y=>new Date(y,2,1,0,0,0)],
-  ["🚀","Lanzamiento Espacial",y=>new Date(y,6,16,0,0,0)],
-  ["🎬","Día del Cine",y=>new Date(y,7,27,0,0,0)],
-  ["🍕","Día de la Pizza",y=>new Date(y,1,9,0,0,0)],
-  ["🍫","Día del Chocolate",y=>new Date(y,6,7,0,0,0)],
-  ["🌮","Día del Taco",y=>new Date(y,2,31,0,0,0)],
-  ["🍩","Día de la Dona",y=>new Date(y,5,6,0,0,0)],
-  ["🎮","Día del Videojuego",y=>new Date(y,7,29,0,0,0)],
-  ["🤖","Día de la Robótica",y=>new Date(y,3,2,0,0,0)],
-  ["🌌","Día de la Astronomía",y=>new Date(y,3,25,0,0,0)],
-  ["📚","Día de los Maestros",y=>new Date(y,8,11,0,0,0)],
-  ["🩺","Día de la Salud",y=>new Date(y,3,7,0,0,0)],
-  ["🚒","Día de los Bomberos",y=>new Date(y,4,4,0,0,0)],
-  ["👮","Día de la Policía",y=>new Date(y,8,29,0,0,0)],
-  ["⚓","Día de la Marina",y=>new Date(y,4,21,0,0,0)],
-  ["✈️","Día de la Aviación",y=>new Date(y,11,7,0,0,0)],
-  ["🚴","Día de la Bicicleta",y=>new Date(y,5,3,0,0,0)],
-  ["🏃","Día del Deporte",y=>new Date(y,3,6,0,0,0)],
-  ["⚽","Día del Fútbol",y=>new Date(y,4,25,0,0,0)],
-  ["🏀","Día del Básquetbol",y=>new Date(y,11,21,0,0,0)],
-  ["🎾","Día del Tenis",y=>new Date(y,2,3,0,0,0)],
-  ["♟️","Día del Ajedrez",y=>new Date(y,6,20,0,0,0)],
-  ["🎨","Día del Arte",y=>new Date(y,3,15,0,0,0)],
-  ["✍️","Día del Escritor",y=>new Date(y,2,3,0,0,0)],
-  ["🎭","Día del Teatro",y=>new Date(y,2,27,0,0,0)],
-  ["💃","Día de la Danza",y=>new Date(y,3,29,0,0,0)],
-  ["🎞️","Día de la Animación",y=>new Date(y,9,28,0,0,0)],
-  ["🎧","Día del DJ",y=>new Date(y,2,9,0,0,0)],
-  ["📺","Día de la Televisión",y=>new Date(y,10,21,0,0,0)],
-  ["📻","Día de la Radio",y=>new Date(y,1,13,0,0,0)],
-  ["🕰️","Día del Tiempo",y=>new Date(y,9,23,0,0,0)],
-  ["❄️","Día de la Nieve",y=>new Date(y,0,18,0,0,0)],
-  ["🌈","Día del Arcoíris",y=>new Date(y,3,3,0,0,0)],
-  ["🌕","Luna Llena de Cosecha",y=>new Date(y,8,18,0,0,0)],
-  ["☄️","Lluvia de Perseidas",y=>new Date(y,7,12,0,0,0)],
-  ["🌠","Lluvia de Gemínidas",y=>new Date(y,11,13,0,0,0)],
-  ["🦕","Día de los Dinosaurios",y=>new Date(y,5,1,0,0,0)],
-  ["🦄","Día del Unicornio",y=>new Date(y,3,9,0,0,0)],
-  ["🐉","Día del Dragón",y=>new Date(y,0,16,0,0,0)],
-  ["🧙","Día de la Fantasía",y=>new Date(y,1,2,0,0,0)],
-  ["🧟","Día de los Zombis",y=>new Date(y,9,8,0,0,0)],
-  ["👽","Día del OVNI",y=>new Date(y,6,2,0,0,0)],
-  ["🏴‍☠️","Hablar como Pirata",y=>new Date(y,8,19,0,0,0)],
-  ["🎁","Día del Regalo",y=>new Date(y,6,25,0,0,0)],
-  ["🎂","Día del Pastel",y=>new Date(y,10,26,0,0,0)],
-  ["🍦","Día del Helado",y=>new Date(y,6,19,0,0,0)],
-  ["🍔","Día de la Hamburguesa",y=>new Date(y,4,28,0,0,0)],
-  ["🍟","Día de las Papas Fritas",y=>new Date(y,6,13,0,0,0)],
-  ["🍿","Día de las Palomitas",y=>new Date(y,0,19,0,0,0)],
-  ["🧀","Día del Queso",y=>new Date(y,5,4,0,0,0)],
-  ["🍓","Día de la Fresa",y=>new Date(y,4,20,0,0,0)],
-  ["🍉","Día de la Sandía",y=>new Date(y,7,3,0,0,0)],
-  ["🥑","Día de la Palta / Aguacate",y=>new Date(y,6,31,0,0,0)],
-  ["🎈","Día de los Globos",y=>new Date(y,8,13,0,0,0)],
-  ["🧸","Día del Oso de Peluche",y=>new Date(y,8,9,0,0,0)],
-  ["🧩","Día del Rompecabezas",y=>new Date(y,0,29,0,0,0)],
-  ["🎲","Día de los Juegos de Mesa",y=>new Date(y,3,11,0,0,0)],
-  ["🎯","Día del Dardo",y=>new Date(y,11,20,0,0,0)],
-  ["💤","Día del Sueño",y=>new Date(y,2,19,0,0,0)],
-  ["🌞","Día del Sol",y=>new Date(y,5,20,0,0,0)],
-  ["🌙","Día de la Luna",y=>new Date(y,6,20,0,0,0)],
-  ["⭐","Día de las Estrellas",y=>new Date(y,11,14,0,0,0)],
-  ["🌸","Día de la Amistad Global",y=>new Date(y,6,30,0,0,0)]
+  ["📚","Día del Idioma Español y del Libro",3,23],
+  ["💃","Día Internacional de la Danza",3,29],
+  ["🌱","Día Mundial del Medio Ambiente",5,5],
+  ["🌊","Día Mundial de los Océanos",5,8],
+  ["🎵","Día de la Música",5,21],
+  ["☀️","Solsticio de Junio",5,21],
+  ["🏳️‍🌈","Día del Orgullo",5,28],
+  ["🍫","Día Mundial del Chocolate",6,7],
+  ["📸","Día de la Fotografía",7,19],
+  ["🎮","Día del Gamer",7,29],
+  ["🌻","Día de la Primavera / Flores",8,21],
+  ["🍂","Equinoccio de Septiembre",8,22],
+  ["🌎","Día Mundial del Turismo",8,27],
+  ["☕","Día Internacional del Café",9,1],
+  ["🐾","Día Mundial de los Animales",9,4],
+  ["💻","Día del Programador",9,13],
+  ["🍽️","Día Mundial de la Alimentación",9,16],
+  ["🕊️","Día de Todos los Santos",10,1],
+  ["☀️","Solsticio de Diciembre",11,21],
+  ["🎄","Nochebuena",11,24],
+  // Argentina
+  ["🇦🇷","Día de la Memoria (Argentina)",2,24],
+  ["🇦🇷","Veteranos y Caídos en Malvinas (Argentina)",3,2],
+  ["🇦🇷","Revolución de Mayo (Argentina)",4,25],
+  ["🇦🇷","Día de la Bandera (Argentina)",5,20],
+  ["🇦🇷","Día de la Independencia (Argentina)",6,9],
+  ["🇦🇷","San Martín (Argentina)",y=>nthWeekday(y,7,1,3)],
+  // Bolivia
+  ["🇧🇴","Día del Estado Plurinacional (Bolivia)",0,22],
+  ["🇧🇴","Día del Mar (Bolivia)",2,23],
+  ["🇧🇴","Independencia de Bolivia",7,6],
+  // Chile
+  ["🇨🇱","Glorias Navales (Chile)",4,21],
+  ["🇨🇱","Día Nacional de los Pueblos Indígenas (Chile)",5,21],
+  ["🇨🇱","San Pedro y San Pablo (Chile)",5,29],
+  ["🇨🇱","Asunción de la Virgen (Chile)",7,15],
+  ["🇨🇱","Fiestas Patrias / Independencia (Chile)",8,18],
+  ["🇨🇱","Glorias del Ejército (Chile)",8,19],
+  ["🇨🇱","Día de las Iglesias Evangélicas (Chile)",9,31],
+  ["🇨🇱","Inmaculada Concepción (Chile)",11,8],
+  // Colombia
+  ["🇨🇴","Batalla de Boyacá (Colombia)",7,7],
+  ["🇨🇴","Independencia de Colombia",6,20],
+  ["🇨🇴","Independencia de Cartagena (Colombia)",10,11],
+  // Costa Rica
+  ["🇨🇷","Batalla de Rivas (Costa Rica)",3,11],
+  ["🇨🇷","Anexión del Partido de Nicoya (Costa Rica)",6,25],
+  ["🇨🇷","Día de la Virgen de los Ángeles (Costa Rica)",7,2],
+  ["🇨🇷","Independencia de Costa Rica",8,15],
+  ["🇨🇷","Abolición del Ejército (Costa Rica)",11,1],
+  // Cuba
+  ["🇨🇺","Triunfo de la Revolución (Cuba)",0,1],
+  ["🇨🇺","Grito de Baire (Cuba)",1,24],
+  ["🇨🇺","Asalto al Cuartel Moncada (Cuba)",6,26],
+  ["🇨🇺","Inicio de las Guerras de Independencia (Cuba)",9,10],
+  // Ecuador
+  ["🇪🇨","Primer Grito de Independencia (Ecuador)",7,10],
+  ["🇪🇨","Independencia de Guayaquil (Ecuador)",9,9],
+  ["🇪🇨","Independencia de Cuenca (Ecuador)",10,3],
+  // El Salvador
+  ["🇸🇻","Fiestas Agostinas / Divino Salvador (El Salvador)",7,6],
+  ["🇸🇻","Independencia de El Salvador",8,15],
+  // España
+  ["🇪🇸","Día de Andalucía (España)",1,28],
+  ["🇪🇸","Fiesta Nacional de España",9,12],
+  ["🇪🇸","Día de la Constitución (España)",11,6],
+  // Guatemala
+  ["🇬🇹","Independencia de Guatemala",8,15],
+  ["🇬🇹","Día de la Revolución (Guatemala)",9,20],
+  // Honduras
+  ["🇭🇳","Día del Lempiras / Independencia (Honduras)",8,15],
+  ["🇭🇳","Día del Soldado (Honduras)",9,3],
+  // México
+  ["🇲🇽","Día de la Constitución (México)",1,5],
+  ["🇲🇽","Natalicio de Benito Juárez (México)",2,21],
+  ["🇲🇽","Día del Trabajo (México)",4,1],
+  ["🇲🇽","Batalla de Puebla (México)",4,5],
+  ["🇲🇽","Grito de Independencia (México)",8,15],
+  ["🇲🇽","Día de la Independencia (México)",8,16],
+  ["🇲🇽","Día de Muertos (México)",10,2],
+  ["🇲🇽","Revolución Mexicana (México)",10,20],
+  ["🇲🇽","Día de la Virgen de Guadalupe (México)",11,12],
+  // Nicaragua
+  ["🇳🇮","Batalla de San Jacinto (Nicaragua)",8,14],
+  ["🇳🇮","Independencia de Nicaragua",8,15],
+  // Panamá
+  ["🇵🇦","Separación de Panamá de Colombia",10,3],
+  ["🇵🇦","Día de la Bandera (Panamá)",10,4],
+  ["🇵🇦","Independencia de Panamá de España",10,28],
+  // Paraguay
+  ["🇵🇾","Independencia de Paraguay",4,14],
+  ["🇵🇾","Paz del Chaco (Paraguay)",5,12],
+  ["🇵🇾","Batalla de Boquerón (Paraguay)",8,29],
+  // Perú
+  ["🇵🇪","Batalla de Arica (Perú)",5,7],
+  ["🇵🇪","Fiestas Patrias / Independencia (Perú)",6,28],
+  ["🇵🇪","Gran Parada Militar (Perú)",6,29],
+  ["🇵🇪","Batalla de Ayacucho (Perú)",11,9],
+  // Puerto Rico
+  ["🇵🇷","Descubrimiento de Puerto Rico",10,19],
+  ["🇵🇷","Día de la Puertorriqueñidad",10,20],
+  // República Dominicana
+  ["🇩🇴","Día de Duarte (República Dominicana)",0,26],
+  ["🇩🇴","Independencia Nacional (República Dominicana)",1,27],
+  ["🇩🇴","Restauración de la República (República Dominicana)",7,16],
+  // Uruguay
+  ["🇺🇾","Desembarco de los Treinta y Tres (Uruguay)",3,19],
+  ["🇺🇾","Jura de la Constitución (Uruguay)",6,18],
+  ["🇺🇾","Declaratoria de la Independencia (Uruguay)",7,25],
+  ["🇺🇾","Día de los Abuelos / Patrimonial (Uruguay)",8,25],
+  // Venezuela
+  ["🇻🇪","Declaración de Independencia (Venezuela)",3,19],
+  ["🇻🇪","Batalla de Carabobo (Venezuela)",5,24],
+  ["🇻🇪","Firma del Acta de Independencia (Venezuela)",6,5],
+  ["🇻🇪","Natalicio de Simón Bolívar (Venezuela)",6,24]
 ];
 
-const festDefs=rawDates.map(([emoji,name,a,b])=>({
-  emoji,name,
-  fn:typeof a==="function"?a:y=>new Date(y,a,b,0,0,0)
-}));
+function mapDateItem(row, isTopDefault){
+  const [emoji,name,a,b]=row;
+  return {
+    emoji,
+    name,
+    isTopDefault:Boolean(isTopDefault),
+    fn:typeof a==="function"?a:y=>new Date(y,a,b,0,0,0)
+  };
+}
+
+const top15List=top15Raw.map(r=>mapDateItem(r,true));
+const allDatesList=[...top15List,...extraHispanosRaw.map(r=>mapDateItem(r,false))];
+
+function normText(str){
+  return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9@\s]/g," ").replace(/\s+/g," ").trim();
+}
 
 function nextFest(fn){
   const now=new Date(),y=now.getFullYear(),t=fn(y);
@@ -232,7 +298,7 @@ let activeHero={name:"Navidad",emoji:"🎄",target:nextFest(y=>new Date(y,11,25,
 let custom=JSON.parse(localStorage.getItem("mi_fecha")||"null");
 
 const nextSelect=document.getElementById("next-select");
-festDefs.forEach((f,idx)=>{
+allDatesList.forEach((f,idx)=>{
   const opt=document.createElement("option");
   opt.value=idx;
   opt.textContent=`${f.emoji} ${f.name}`;
@@ -240,7 +306,7 @@ festDefs.forEach((f,idx)=>{
 });
 
 document.getElementById("btn-set-next").onclick=()=>{
-  const chosen=festDefs[Number(nextSelect.value)];
+  const chosen=allDatesList[Number(nextSelect.value)];
   activeHero={emoji:chosen.emoji,name:chosen.name,target:nextFest(chosen.fn)};
   tick();
 };
@@ -279,19 +345,21 @@ const topBody=document.getElementById("top-body"),searchInp=document.getElementB
 searchInp.oninput=()=>renderTopTable();
 
 function renderTopTable(){
-  const q=searchInp.value.trim().toLowerCase();
-  const sorted=festDefs.map(x=>{
+  const q=normText(searchInp.value);
+  const pool=q?allDatesList:top15List;
+  const rows=pool.map(x=>{
     const dt=nextFest(x.fn);
     return {...x,dt,diff:dt-Date.now()};
-  }).sort((a,b)=>a.diff-b.diff);
+  }).sort((a,b)=>a.diff-b.diff).filter(x=>!q||normText(x.name).includes(q));
 
-  const filtered=q?sorted.filter(x=>x.name.toLowerCase().includes(q)):sorted;
-  topCount.textContent=`Mostrando ${filtered.length} de ${sorted.length} fechas festivas`;
+  topCount.textContent=q
+    ? `Resultados encontrados: ${rows.length} (catálogo Latam e hispano)`
+    : `Top ${rows.length} fechas principales • Escribe en el buscador para explorar más`;
 
-  topBody.innerHTML=filtered.map((item,i)=>`
+  topBody.innerHTML=rows.map((item,i)=>`
     <tr>
       <td><b>#${i+1}</b></td>
-      <td><b>${item.emoji} ${item.name}</b><br><span style="opacity:.7;font-size:.75rem">${item.dt.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"})}</span></td>
+      <td><b>${item.emoji} ${item.name}</b>${item.isTopDefault && !q?'<span class="badge">Top</span>':''}<br><span style="opacity:.7;font-size:.75rem">${item.dt.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"})}</span></td>
       <td style="font-variant-numeric:tabular-nums;font-weight:700">${fmtLeft(item.diff)}</td>
       <td><button type="button" class="pick-btn" data-ts="${item.dt.getTime()}" data-emoji="${item.emoji}" data-name="${item.name.replace(/"/g,'&quot;')}">Usar</button></td>
     </tr>
@@ -335,5 +403,4 @@ function tick(){
 renderCustom();tick();setInterval(tick,1000);
 </script>
 </body>
-  </html>
-  
+</html>
