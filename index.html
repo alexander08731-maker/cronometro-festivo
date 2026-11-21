@@ -24,6 +24,8 @@ h2{font-size:1.25rem;margin-bottom:4px}
 .sub{opacity:.82;margin-bottom:16px;font-size:.88rem}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 @media(min-width:480px){.grid{grid-template-columns:repeat(4,1fr)}}
+.grid-5{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:520px){.grid-5{grid-template-columns:repeat(5,1fr)}}
 .box{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:13px 6px}
 .num{display:block;font-size:1.9rem;font-weight:800;font-variant-numeric:tabular-nums}
 .lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:1.4px;opacity:.75;margin-top:4px}
@@ -50,6 +52,7 @@ th{position:sticky;top:0;background:#2a0b0e;font-size:.74rem;text-transform:uppe
 .info-item{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:12px}
 .info-k{font-size:.7rem;text-transform:uppercase;letter-spacing:1.2px;opacity:.72;margin-bottom:4px}
 .info-v{font-size:.9rem;font-weight:700;line-height:1.35}
+.soon-title{font-size:2.1rem;font-weight:900;margin-bottom:18px;letter-spacing:.5px}
 .ver-foot{margin-top:auto;font-size:.8rem;opacity:.75;letter-spacing:.6px}
 .hidden{display:none}
 </style>
@@ -60,6 +63,7 @@ th{position:sticky;top:0;background:#2a0b0e;font-size:.74rem;text-transform:uppe
   <button type="button" id="tab-home" class="nav-btn nav-main active">⏳ Cronómetros</button>
   <button type="button" id="tab-top" class="nav-btn nav-top">🏆 Las Mejores Fechas</button>
   <button type="button" id="btn-theme" class="nav-btn nav-theme">🎨 Tema: Navidad</button>
+  <button type="button" id="tab-events" class="nav-btn nav-theme">🎉 Eventos</button>
 </header>
 
 <div id="view-home" class="wrap">
@@ -152,11 +156,44 @@ th{position:sticky;top:0;background:#2a0b0e;font-size:.74rem;text-transform:uppe
   </section>
 </div>
 
-<footer class="ver-foot" id="ver-label">V. 0.6</footer>
+<div id="view-events" class="wrap hidden">
+  <section class="card">
+    <div class="soon-title">Pronto</div>
+    <div class="grid-5">
+      <div class="box"><span class="num" id="ev-mo">00</span><div class="lbl">Meses</div></div>
+      <div class="box"><span class="num" id="ev-d">00</span><div class="lbl">Días</div></div>
+      <div class="box"><span class="num" id="ev-h">00</span><div class="lbl">Horas</div></div>
+      <div class="box"><span class="num" id="ev-m">00</span><div class="lbl">Minutos</div></div>
+      <div class="box"><span class="num" id="ev-s">00</span><div class="lbl">Segundos</div></div>
+    </div>
+  </section>
+</div>
+
+<footer class="ver-foot" id="ver-label">V. 0.7</footer>
 
 <script>
-const APP_VERSION="V. 0.6";
+const APP_VERSION="V. 0.7";
 document.getElementById("ver-label").textContent=APP_VERSION;
+
+// =========================================================================
+// CAMBIA AQUÍ LA FECHA DEL CONTADOR DE "EVENTOS" (AÑO, MES 1-12, DÍA, HORA, MIN)
+// Ejemplo: { year: 2026, month: 12, day: 15, hour: 0, minute: 0 }
+// =========================================================================
+const EVENT_DATE_CONFIG = {
+  year: 2027,
+  month: 2,
+  day: 2,
+  hour: 2,
+  minute: 2
+};
+const EVENT_TARGET = new Date(
+  EVENT_DATE_CONFIG.year,
+  EVENT_DATE_CONFIG.month - 1,
+  EVENT_DATE_CONFIG.day,
+  EVENT_DATE_CONFIG.hour,
+  EVENT_DATE_CONFIG.minute,
+  0
+);
 
 const THEMES=[
   {cls:"",label:"🎨 Tema: Navidad"},
@@ -344,10 +381,19 @@ document.getElementById("btn-set-next").onclick=()=>{
   tick();
 };
 
-const viewHome=document.getElementById("view-home"),viewTop=document.getElementById("view-top");
-const tabHome=document.getElementById("tab-home"),tabTop=document.getElementById("tab-top");
-tabHome.onclick=()=>{viewHome.classList.remove("hidden");viewTop.classList.add("hidden");tabHome.classList.add("active");tabTop.classList.remove("active")};
-tabTop.onclick=()=>{viewTop.classList.remove("hidden");viewHome.classList.add("hidden");tabTop.classList.add("active");tabHome.classList.remove("active")};
+const viewHome=document.getElementById("view-home"),viewTop=document.getElementById("view-top"),viewEvents=document.getElementById("view-events");
+const tabHome=document.getElementById("tab-home"),tabTop=document.getElementById("tab-top"),tabEvents=document.getElementById("tab-events");
+function showTab(which){
+  viewHome.classList.toggle("hidden",which!=="home");
+  viewTop.classList.toggle("hidden",which!=="top");
+  viewEvents.classList.toggle("hidden",which!=="events");
+  tabHome.classList.toggle("active",which==="home");
+  tabTop.classList.toggle("active",which==="top");
+  tabEvents.classList.toggle("active",which==="events");
+}
+tabHome.onclick=()=>showTab("home");
+tabTop.onclick=()=>showTab("top");
+tabEvents.onclick=()=>showTab("events");
 
 const formBox=document.getElementById("form-box"),customBox=document.getElementById("custom-box");
 function renderCustom(){
@@ -401,7 +447,7 @@ function renderTopTable(){
   topBody.querySelectorAll(".pick-btn").forEach(btn=>{
     btn.onclick=()=>{
       activeHero={emoji:btn.dataset.emoji,name:btn.dataset.name,target:new Date(Number(btn.dataset.ts))};
-      tabHome.click();
+      showTab("home");
       tick();
     };
   });
@@ -422,6 +468,31 @@ function updateBox(target,p,msgId,nextId){
   document.getElementById(p+"h").textContent=String(Math.floor(s%86400/3600)).padStart(2,"0");
   document.getElementById(p+"m").textContent=String(Math.floor(s%3600/60)).padStart(2,"0");
   document.getElementById(p+"s").textContent=String(s%60).padStart(2,"0");
+}
+
+function updateEventCountdown(){
+  const now=new Date();
+  if(now>=EVENT_TARGET){
+    ["ev-mo","ev-d","ev-h","ev-m","ev-s"].forEach(id=>document.getElementById(id).textContent="00");
+    return;
+  }
+  let months=(EVENT_TARGET.getFullYear()-now.getFullYear())*12+(EVENT_TARGET.getMonth()-now.getMonth());
+  let anchor=new Date(now.getFullYear(),now.getMonth()+months,now.getDate(),now.getHours(),now.getMinutes(),now.getSeconds());
+  if(anchor>EVENT_TARGET){
+    months--;
+    anchor=new Date(now.getFullYear(),now.getMonth()+months,now.getDate(),now.getHours(),now.getMinutes(),now.getSeconds());
+  }
+  const remSec=Math.max(0,Math.floor((EVENT_TARGET-anchor)/1000));
+  const days=Math.floor(remSec/86400);
+  const hours=Math.floor((remSec%86400)/3600);
+  const minutes=Math.floor((remSec%3600)/60);
+  const seconds=remSec%60;
+
+  document.getElementById("ev-mo").textContent=String(Math.max(0,months)).padStart(2,"0");
+  document.getElementById("ev-d").textContent=String(days).padStart(2,"0");
+  document.getElementById("ev-h").textContent=String(hours).padStart(2,"0");
+  document.getElementById("ev-m").textContent=String(minutes).padStart(2,"0");
+  document.getElementById("ev-s").textContent=String(seconds).padStart(2,"0");
 }
 
 function updateExtraInfo(){
@@ -452,6 +523,7 @@ function tick(){
   document.getElementById("f-nav").textContent=activeHero.target.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
   updateBox(activeHero.target,"n","m-nav","next-box");
   if(custom)updateBox(custom.ts,"c","m-cus",null);
+  updateEventCountdown();
   updateExtraInfo();
   renderTopTable();
 }
