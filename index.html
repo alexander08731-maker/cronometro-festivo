@@ -6,18 +6,24 @@
 <title>Cronómetro & Fechas Hispanas</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
-body{min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:18px;background:linear-gradient(135deg,#450a0a,#7f1d1d,#064e3b);color:#fff;padding:18px 14px 36px;text-align:center}
-.topbar{width:100%;max-width:660px;display:flex;gap:10px;padding:8px;border-radius:18px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);box-shadow:0 10px 25px rgba(0,0,0,.35)}
-.nav-btn{flex:1;padding:11px 12px;border-radius:13px;border:none;font-size:.9rem;font-weight:800;cursor:pointer;transition:.2s}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:16px;background:linear-gradient(135deg,#450a0a,#7f1d1d,#064e3b);color:#fff;padding:16px 14px 28px;text-align:center;transition:background .35s}
+body.neon{background:linear-gradient(135deg,#090d16,#1e1b4b,#0f172a)}
+.topbar{width:100%;max-width:660px;display:flex;gap:8px;flex-wrap:wrap;padding:8px;border-radius:18px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);box-shadow:0 10px 25px rgba(0,0,0,.35)}
+.nav-btn{flex:1;min-width:130px;padding:10px 12px;border-radius:13px;border:none;font-size:.88rem;font-weight:800;cursor:pointer;transition:.2s}
 .nav-main{background:rgba(255,255,255,.14);color:#fff}
 .nav-top{background:linear-gradient(90deg,#f59e0b,#ec4899,#8b5cf6);color:#fff;box-shadow:0 4px 15px rgba(236,72,153,.35)}
+.nav-mini{flex:0 1 auto;background:rgba(255,255,255,.12);color:#fff;font-size:.8rem;padding:10px}
 .nav-btn.active{outline:2px solid #fff;transform:scale(1.01)}
-.wrap{width:100%;max-width:660px;display:flex;flex-direction:column;gap:20px}
-.card{width:100%;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.16);border-radius:24px;padding:20px 14px}
+.wrap{width:100%;max-width:660px;display:flex;flex-direction:column;gap:18px}
+.card{width:100%;background:rgba(0,0,0,.26);border:1px solid rgba(255,255,255,.16);border-radius:24px;padding:20px 14px;transition:box-shadow .3s,border-color .3s}
+.card.soon{border-color:#fbbf24;box-shadow:0 0 24px rgba(251,191,36,.32)}
 .emoji{font-size:3rem;margin-bottom:6px}
 h1{font-size:1.85rem;margin-bottom:4px}
 h2{font-size:1.25rem;margin-bottom:4px}
-.sub{opacity:.82;margin-bottom:16px;font-size:.88rem}
+.sub{opacity:.84;margin-bottom:6px;font-size:.88rem}
+.info-tag{display:inline-block;margin:4px auto 14px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.12);font-size:.8rem;opacity:.92}
+.prog-wrap{width:100%;height:9px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden;margin-bottom:14px}
+.prog-bar{height:100%;width:0%;background:linear-gradient(90deg,#34d399,#fbbf24,#f472b6);transition:width .5s}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 @media(min-width:480px){.grid{grid-template-columns:repeat(4,1fr)}}
 .box{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:13px 6px}
@@ -38,9 +44,10 @@ form{display:flex;flex-direction:column;gap:10px;margin-top:8px}
 .table-wrap{width:100%;max-height:460px;overflow:auto;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.14)}
 table{width:100%;border-collapse:collapse;font-size:.84rem}
 th,td{padding:9px 8px;border-bottom:1px solid rgba(255,255,255,.1);text-align:left}
-th{position:sticky;top:0;background:#2a0b0e;font-size:.74rem;text-transform:uppercase;letter-spacing:1px;z-index:1}
+th{position:sticky;top:0;background:#1f1624;font-size:.74rem;text-transform:uppercase;letter-spacing:1px;z-index:1}
 .pick-btn{padding:6px 9px;border-radius:8px;border:none;background:#fbbf24;color:#1f2937;font-weight:800;font-size:.75rem;cursor:pointer;white-space:nowrap}
 .badge{display:inline-block;font-size:.68rem;padding:2px 6px;border-radius:999px;background:rgba(255,255,255,.14);opacity:.85;margin-left:4px}
+.ver-foot{margin-top:auto;padding-top:8px;font-size:.8rem;opacity:.75;letter-spacing:.6px}
 .hidden{display:none}
 </style>
 </head>
@@ -49,13 +56,17 @@ th{position:sticky;top:0;background:#2a0b0e;font-size:.74rem;text-transform:uppe
 <header class="topbar">
   <button type="button" id="tab-home" class="nav-btn nav-main active">⏳ Cronómetros</button>
   <button type="button" id="tab-top" class="nav-btn nav-top">🏆 Las Mejores Fechas</button>
+  <button type="button" id="btn-theme" class="nav-btn nav-mini" title="Cambiar fondo">🌗 Tema</button>
+  <button type="button" id="btn-copy" class="nav-btn nav-mini" title="Copiar enlace">🔗 Copiar</button>
 </header>
 
 <div id="view-home" class="wrap">
-  <section class="card">
+  <section class="card" id="hero-card">
     <div class="emoji" id="hero-emoji">🎄</div>
     <h1 id="hero-title">Navidad</h1>
     <p class="sub" id="f-nav">25 de diciembre</p>
+    <div class="info-tag" id="hero-info">Celebración clásica de fin de año en familia.</div>
+    <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
     <div class="grid">
       <div class="box"><span class="num" id="nd">00</span><div class="lbl">Días</div></div>
       <div class="box"><span class="num" id="nh">00</span><div class="lbl">Horas</div></div>
@@ -118,7 +129,12 @@ th{position:sticky;top:0;background:#2a0b0e;font-size:.74rem;text-transform:uppe
   </section>
 </div>
 
+<footer class="ver-foot" id="ver-label">V. 3.0</footer>
+
 <script>
+const APP_VERSION="V. 3.0";
+document.getElementById("ver-label").textContent=APP_VERSION;
+
 function easterDate(y){
   const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31)-1,da=((h+l-7*m+114)%31)+1;
   return new Date(y,mo,da,0,0,0);
@@ -128,153 +144,130 @@ function nthWeekday(y,m,wd,n){
   return new Date(y,m,1+off+(n-1)*7,0,0,0);
 }
 
-// Top 15 fechas principales (se muestran por defecto en la tabla)
 const top15Raw=[
-  ["🎄","Navidad",11,25,true],
-  ["🎆","Año Nuevo",0,1,true],
-  ["👑","Día de Reyes",0,6,true],
-  ["💘","San Valentín / Día del Amor",1,14,true],
-  ["🌷","Día de la Mujer",2,8,true],
-  ["🐰","Domingo de Pascua",y=>easterDate(y),null,true],
-  ["🌍","Día de la Tierra",3,22,true],
-  ["🌼","Día del Trabajo",4,1,true],
-  ["🌺","Día de las Madres",y=>nthWeekday(y,4,0,2),null,true],
-  ["👔","Día del Padre",y=>nthWeekday(y,5,0,3),null,true],
-  ["🤝","Día de la Amistad",6,20,true],
-  ["🎂","Día del Niñ@",7,16,true],
-  ["🏛️","Día de la Hispanidad",9,12,true],
-  ["🎃","Halloween",9,31,true],
-  ["🥂","Fin de Año",11,31,true]
+  ["🎄","Navidad",11,25,true,"Celebración clásica de fin de año y encuentro familiar."],
+  ["🎆","Año Nuevo",0,1,true,"Inicio oficial del nuevo ciclo en el calendario."],
+  ["👑","Día de Reyes",0,6,true,"Tradición festiva de cierre de temporada navideña."],
+  ["💘","San Valentín / Día del Amor",1,14,true,"Fecha popular para celebrar el cariño y la amistad."],
+  ["🌷","Día de la Mujer",2,8,true,"Jornada internacional de reconocimiento y derechos."],
+  ["🐰","Domingo de Pascua",y=>easterDate(y),null,true,"Fecha móvil de primavera según el cómputo pascual."],
+  ["🌍","Día de la Tierra",3,22,true,"Día dedicado a la protección del planeta y el entorno."],
+  ["🌼","Día del Trabajo",4,1,true,"Conmemoración histórica de los trabajadores."],
+  ["🌺","Día de las Madres",y=>nthWeekday(y,4,0,2),null,true,"Homenaje a las madres en distintos países hispanos."],
+  ["👔","Día del Padre",y=>nthWeekday(y,5,0,3),null,true,"Celebración dedicada a los padres."],
+  ["🤝","Día de la Amistad",6,20,true,"Fecha especial para celebrar amistades y lazos cercanos."],
+  ["🎂","Día del Niñ@",7,16,true,"Jornada dedicada a la alegría y bienestar de l@s niñ@s."],
+  ["🏛️","Día de la Hispanidad",9,12,true,"Encuentro histórico y cultural del mundo hispanohablante."],
+  ["🎃","Halloween",9,31,true,"Noche de disfraces, calabazas y temática misteriosa."],
+  ["🥂","Fin de Año",11,31,true,"Último día del año para despedir el ciclo actual."]
 ];
 
-// Catálogo amplio de búsqueda: Latam y países de habla hispana (sin EE.UU., Francia, India, etc.)
 const extraHispanosRaw=[
-  // Generales / culturales / efemérides hispanas
-  ["🐣","Lunes de Pascua",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()+1,0,0,0)}],
-  ["🙏","Viernes Santo",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()-2,0,0,0)}],
-  ["🎭","Martes de Carnaval",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()-47,0,0,0)}],
-  ["📚","Día del Idioma Español y del Libro",3,23],
-  ["💃","Día Internacional de la Danza",3,29],
-  ["🌱","Día Mundial del Medio Ambiente",5,5],
-  ["🌊","Día Mundial de los Océanos",5,8],
-  ["🎵","Día de la Música",5,21],
-  ["☀️","Solsticio de Junio",5,21],
-  ["🏳️‍🌈","Día del Orgullo",5,28],
-  ["🍫","Día Mundial del Chocolate",6,7],
-  ["📸","Día de la Fotografía",7,19],
-  ["🎮","Día del Gamer",7,29],
-  ["🌻","Día de la Primavera / Flores",8,21],
-  ["🍂","Equinoccio de Septiembre",8,22],
-  ["🌎","Día Mundial del Turismo",8,27],
-  ["☕","Día Internacional del Café",9,1],
-  ["🐾","Día Mundial de los Animales",9,4],
-  ["💻","Día del Programador",9,13],
-  ["🍽️","Día Mundial de la Alimentación",9,16],
-  ["🕊️","Día de Todos los Santos",10,1],
-  ["☀️","Solsticio de Diciembre",11,21],
-  ["🎄","Nochebuena",11,24],
-  // Argentina
-  ["🇦🇷","Día de la Memoria (Argentina)",2,24],
-  ["🇦🇷","Veteranos y Caídos en Malvinas (Argentina)",3,2],
-  ["🇦🇷","Revolución de Mayo (Argentina)",4,25],
-  ["🇦🇷","Día de la Bandera (Argentina)",5,20],
-  ["🇦🇷","Día de la Independencia (Argentina)",6,9],
-  ["🇦🇷","San Martín (Argentina)",y=>nthWeekday(y,7,1,3)],
-  // Bolivia
-  ["🇧🇴","Día del Estado Plurinacional (Bolivia)",0,22],
-  ["🇧🇴","Día del Mar (Bolivia)",2,23],
-  ["🇧🇴","Independencia de Bolivia",7,6],
-  // Chile
-  ["🇨🇱","Glorias Navales (Chile)",4,21],
-  ["🇨🇱","Día Nacional de los Pueblos Indígenas (Chile)",5,21],
-  ["🇨🇱","San Pedro y San Pablo (Chile)",5,29],
-  ["🇨🇱","Asunción de la Virgen (Chile)",7,15],
-  ["🇨🇱","Fiestas Patrias / Independencia (Chile)",8,18],
-  ["🇨🇱","Glorias del Ejército (Chile)",8,19],
-  ["🇨🇱","Día de las Iglesias Evangélicas (Chile)",9,31],
-  ["🇨🇱","Inmaculada Concepción (Chile)",11,8],
-  // Colombia
-  ["🇨🇴","Batalla de Boyacá (Colombia)",7,7],
-  ["🇨🇴","Independencia de Colombia",6,20],
-  ["🇨🇴","Independencia de Cartagena (Colombia)",10,11],
-  // Costa Rica
-  ["🇨🇷","Batalla de Rivas (Costa Rica)",3,11],
-  ["🇨🇷","Anexión del Partido de Nicoya (Costa Rica)",6,25],
-  ["🇨🇷","Día de la Virgen de los Ángeles (Costa Rica)",7,2],
-  ["🇨🇷","Independencia de Costa Rica",8,15],
-  ["🇨🇷","Abolición del Ejército (Costa Rica)",11,1],
-  // Cuba
-  ["🇨🇺","Triunfo de la Revolución (Cuba)",0,1],
-  ["🇨🇺","Grito de Baire (Cuba)",1,24],
-  ["🇨🇺","Asalto al Cuartel Moncada (Cuba)",6,26],
-  ["🇨🇺","Inicio de las Guerras de Independencia (Cuba)",9,10],
-  // Ecuador
-  ["🇪🇨","Primer Grito de Independencia (Ecuador)",7,10],
-  ["🇪🇨","Independencia de Guayaquil (Ecuador)",9,9],
-  ["🇪🇨","Independencia de Cuenca (Ecuador)",10,3],
-  // El Salvador
-  ["🇸🇻","Fiestas Agostinas / Divino Salvador (El Salvador)",7,6],
-  ["🇸🇻","Independencia de El Salvador",8,15],
-  // España
-  ["🇪🇸","Día de Andalucía (España)",1,28],
-  ["🇪🇸","Fiesta Nacional de España",9,12],
-  ["🇪🇸","Día de la Constitución (España)",11,6],
-  // Guatemala
-  ["🇬🇹","Independencia de Guatemala",8,15],
-  ["🇬🇹","Día de la Revolución (Guatemala)",9,20],
-  // Honduras
-  ["🇭🇳","Día del Lempiras / Independencia (Honduras)",8,15],
-  ["🇭🇳","Día del Soldado (Honduras)",9,3],
-  // México
-  ["🇲🇽","Día de la Constitución (México)",1,5],
-  ["🇲🇽","Natalicio de Benito Juárez (México)",2,21],
-  ["🇲🇽","Día del Trabajo (México)",4,1],
-  ["🇲🇽","Batalla de Puebla (México)",4,5],
-  ["🇲🇽","Grito de Independencia (México)",8,15],
-  ["🇲🇽","Día de la Independencia (México)",8,16],
-  ["🇲🇽","Día de Muertos (México)",10,2],
-  ["🇲🇽","Revolución Mexicana (México)",10,20],
-  ["🇲🇽","Día de la Virgen de Guadalupe (México)",11,12],
-  // Nicaragua
-  ["🇳🇮","Batalla de San Jacinto (Nicaragua)",8,14],
-  ["🇳🇮","Independencia de Nicaragua",8,15],
-  // Panamá
-  ["🇵🇦","Separación de Panamá de Colombia",10,3],
-  ["🇵🇦","Día de la Bandera (Panamá)",10,4],
-  ["🇵🇦","Independencia de Panamá de España",10,28],
-  // Paraguay
-  ["🇵🇾","Independencia de Paraguay",4,14],
-  ["🇵🇾","Paz del Chaco (Paraguay)",5,12],
-  ["🇵🇾","Batalla de Boquerón (Paraguay)",8,29],
-  // Perú
-  ["🇵🇪","Batalla de Arica (Perú)",5,7],
-  ["🇵🇪","Fiestas Patrias / Independencia (Perú)",6,28],
-  ["🇵🇪","Gran Parada Militar (Perú)",6,29],
-  ["🇵🇪","Batalla de Ayacucho (Perú)",11,9],
-  // Puerto Rico
-  ["🇵🇷","Descubrimiento de Puerto Rico",10,19],
-  ["🇵🇷","Día de la Puertorriqueñidad",10,20],
-  // República Dominicana
-  ["🇩🇴","Día de Duarte (República Dominicana)",0,26],
-  ["🇩🇴","Independencia Nacional (República Dominicana)",1,27],
-  ["🇩🇴","Restauración de la República (República Dominicana)",7,16],
-  // Uruguay
-  ["🇺🇾","Desembarco de los Treinta y Tres (Uruguay)",3,19],
-  ["🇺🇾","Jura de la Constitución (Uruguay)",6,18],
-  ["🇺🇾","Declaratoria de la Independencia (Uruguay)",7,25],
-  ["🇺🇾","Día de los Abuelos / Patrimonial (Uruguay)",8,25],
-  // Venezuela
-  ["🇻🇪","Declaración de Independencia (Venezuela)",3,19],
-  ["🇻🇪","Batalla de Carabobo (Venezuela)",5,24],
-  ["🇻🇪","Firma del Acta de Independencia (Venezuela)",6,5],
-  ["🇻🇪","Natalicio de Simón Bolívar (Venezuela)",6,24]
+  ["🐣","Lunes de Pascua",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()+1,0,0,0)},"Día siguiente al Domingo de Pascua."],
+  ["🙏","Viernes Santo",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()-2,0,0,0)},"Fecha tradicional de Semana Santa."],
+  ["🎭","Martes de Carnaval",y=>{const d=easterDate(y);return new Date(y,d.getMonth(),d.getDate()-47,0,0,0)},"Cierre festivo previo a la Cuaresma."],
+  ["📚","Día del Idioma Español y del Libro",3,23,"Celebración de la lengua española y la lectura."],
+  ["💃","Día Internacional de la Danza",3,29,"Día dedicado al baile y la expresión corporal."],
+  ["🌱","Día Mundial del Medio Ambiente",5,5,"Conciencia ambiental global."],
+  ["🌊","Día Mundial de los Océanos",5,8,"Cuidado de mares y ecosistemas marinos."],
+  ["🎵","Día de la Música",5,21,"Celebración mundial de la música y sus artistas."],
+  ["☀️","Solsticio de Junio",5,21,"Cambio astronómico de estación."],
+  ["🏳️‍🌈","Día del Orgullo",5,28,"Visibilidad, respeto y diversidad."],
+  ["🍫","Día Mundial del Chocolate",6,7,"Uno de los días más dulces del calendario."],
+  ["📸","Día de la Fotografía",7,19,"Homenaje a capturar momentos en imagen."],
+  ["🎮","Día del Gamer",7,29,"Celebración para fans de los videojuegos."],
+  ["🌻","Día de la Primavera / Flores",8,21,"Llegada de la primavera en el hemisferio sur."],
+  ["🍂","Equinoccio de Septiembre",8,22,"Cambio astronómico de equinoccio."],
+  ["🌎","Día Mundial del Turismo",8,27,"Viajes, culturas y turismo."],
+  ["☕","Día Internacional del Café",9,1,"Día para los amantes del café."],
+  ["🐾","Día Mundial de los Animales",9,4,"Bienestar y cuidado animal."],
+  ["💻","Día del Programador",9,13,"Día 256 del año dedicado a quienes programan."],
+  ["🍽️","Día Mundial de la Alimentación",9,16,"Cultura alimentaria y nutrición."],
+  ["🕊️","Día de Todos los Santos",10,1,"Tradición conmemorativa."],
+  ["☀️","Solsticio de Diciembre",11,21,"Cambio astronómico de solsticio."],
+  ["🎄","Nochebuena",11,24,"Víspera de Navidad."],
+  ["🇦🇷","Día de la Memoria (Argentina)",2,24,"Efeméride nacional de Argentina."],
+  ["🇦🇷","Veteranos y Caídos en Malvinas (Argentina)",3,2,"Conmemoración en Argentina."],
+  ["🇦🇷","Revolución de Mayo (Argentina)",4,25,"Fecha patria de Argentina."],
+  ["🇦🇷","Día de la Bandera (Argentina)",5,20,"Homenaje a la bandera argentina."],
+  ["🇦🇷","Día de la Independencia (Argentina)",6,9,"Independencia de Argentina."],
+  ["🇦🇷","San Martín (Argentina)",y=>nthWeekday(y,7,1,3),"Conmemoración del Gral. San Martín en Argentina."],
+  ["🇧🇴","Día del Estado Plurinacional (Bolivia)",0,22,"Efeméride nacional de Bolivia."],
+  ["🇧🇴","Día del Mar (Bolivia)",2,23,"Conmemoración marítima en Bolivia."],
+  ["🇧🇴","Independencia de Bolivia",7,6,"Fecha patria de Bolivia."],
+  ["🇨🇱","Glorias Navales (Chile)",4,21,"Conmemoración naval en Chile."],
+  ["🇨🇱","Día Nacional de los Pueblos Indígenas (Chile)",5,21,"Reconocimiento a pueblos originarios en Chile."],
+  ["🇨🇱","San Pedro y San Pablo (Chile)",5,29,"Festividad tradicional en Chile."],
+  ["🇨🇱","Asunción de la Virgen (Chile)",7,15,"Festividad en Chile."],
+  ["🇨🇱","Fiestas Patrias / Independencia (Chile)",8,18,"Celebración principal de Fiestas Patrias en Chile."],
+  ["🇨🇱","Glorias del Ejército (Chile)",8,19,"Segundo día de celebración patricia en Chile."],
+  ["🇨🇱","Día de las Iglesias Evangélicas (Chile)",9,31,"Conmemoración nacional en Chile."],
+  ["🇨🇱","Inmaculada Concepción (Chile)",11,8,"Festividad en Chile."],
+  ["🇨🇴","Batalla de Boyacá (Colombia)",7,7,"Efeméride histórica de Colombia."],
+  ["🇨🇴","Independencia de Colombia",6,20,"Fecha patria de Colombia."],
+  ["🇨🇴","Independencia de Cartagena (Colombia)",10,11,"Conmemoración en Colombia."],
+  ["🇨🇷","Batalla de Rivas (Costa Rica)",3,11,"Efeméride histórica de Costa Rica."],
+  ["🇨🇷","Anexión del Partido de Nicoya (Costa Rica)",6,25,"Celebración en Costa Rica."],
+  ["🇨🇷","Día de la Virgen de los Ángeles (Costa Rica)",7,2,"Festividad tradicional de Costa Rica."],
+  ["🇨🇷","Independencia de Costa Rica",8,15,"Fecha patria de Costa Rica."],
+  ["🇨🇷","Abolición del Ejército (Costa Rica)",11,1,"Efeméride cívica de Costa Rica."],
+  ["🇨🇺","Triunfo de la Revolución (Cuba)",0,1,"Efeméride en Cuba."],
+  ["🇨🇺","Grito de Baire (Cuba)",1,24,"Efeméride histórica de Cuba."],
+  ["🇨🇺","Asalto al Cuartel Moncada (Cuba)",6,26,"Efeméride en Cuba."],
+  ["🇨🇺","Inicio de las Guerras de Independencia (Cuba)",9,10,"Efeméride histórica de Cuba."],
+  ["🇪🇨","Primer Grito de Independencia (Ecuador)",7,10,"Efeméride en Ecuador."],
+  ["🇪🇨","Independencia de Guayaquil (Ecuador)",9,9,"Celebración local e histórica en Ecuador."],
+  ["🇪🇨","Independencia de Cuenca (Ecuador)",10,3,"Celebración histórica en Ecuador."],
+  ["🇸🇻","Fiestas Agostinas / Divino Salvador (El Salvador)",7,6,"Festividad principal en El Salvador."],
+  ["🇸🇻","Independencia de El Salvador",8,15,"Fecha patria de El Salvador."],
+  ["🇪🇸","Día de Andalucía (España)",1,28,"Celebración autonómica en España."],
+  ["🇪🇸","Fiesta Nacional de España",9,12,"Día nacional en España."],
+  ["🇪🇸","Día de la Constitución (España)",11,6,"Efeméride constitucional en España."],
+  ["🇬🇹","Independencia de Guatemala",8,15,"Fecha patria de Guatemala."],
+  ["🇬🇹","Día de la Revolución (Guatemala)",9,20,"Efeméride histórica en Guatemala."],
+  ["🇭🇳","Independencia de Honduras",8,15,"Fecha patria de Honduras."],
+  ["🇭🇳","Día del Soldado (Honduras)",9,3,"Efeméride en Honduras."],
+  ["🇲🇽","Día de la Constitución (México)",1,5,"Efeméride en México."],
+  ["🇲🇽","Natalicio de Benito Juárez (México)",2,21,"Conmemoración en México."],
+  ["🇲🇽","Batalla de Puebla (México)",4,5,"Efeméride histórica en México."],
+  ["🇲🇽","Grito de Independencia (México)",8,15,"Víspera de Independencia en México."],
+  ["🇲🇽","Día de la Independencia (México)",8,16,"Fecha patria de México."],
+  ["🇲🇽","Día de Muertos (México)",10,2,"Tradición cultural emblemática de México."],
+  ["🇲🇽","Revolución Mexicana (México)",10,20,"Efeméride histórica de México."],
+  ["🇲🇽","Día de la Virgen de Guadalupe (México)",11,12,"Festividad tradicional en México."],
+  ["🇳🇮","Batalla de San Jacinto (Nicaragua)",8,14,"Efeméride histórica en Nicaragua."],
+  ["🇳🇮","Independencia de Nicaragua",8,15,"Fecha patria de Nicaragua."],
+  ["🇵🇦","Separación de Panamá de Colombia",10,3,"Efeméride en Panamá."],
+  ["🇵🇦","Día de la Bandera (Panamá)",10,4,"Celebración cívica en Panamá."],
+  ["🇵🇦","Independencia de Panamá de España",10,28,"Efeméride en Panamá."],
+  ["🇵🇾","Independencia de Paraguay",4,14,"Fecha patria de Paraguay."],
+  ["🇵🇾","Paz del Chaco (Paraguay)",5,12,"Efeméride histórica en Paraguay."],
+  ["🇵🇾","Batalla de Boquerón (Paraguay)",8,29,"Conmemoración en Paraguay."],
+  ["🇵🇪","Batalla de Arica (Perú)",5,7,"Efeméride histórica en Perú."],
+  ["🇵🇪","Fiestas Patrias / Independencia (Perú)",6,28,"Celebración patria en Perú."],
+  ["🇵🇪","Gran Parada Militar (Perú)",6,29,"Tradición de Fiestas Patrias en Perú."],
+  ["🇵🇪","Batalla de Ayacucho (Perú)",11,9,"Efeméride histórica en Perú."],
+  ["🇵🇷","Descubrimiento de Puerto Rico",10,19,"Efeméride en Puerto Rico."],
+  ["🇵🇷","Día de la Puertorriqueñidad",10,20,"Celebración cultural en Puerto Rico."],
+  ["🇩🇴","Día de Duarte (República Dominicana)",0,26,"Patricio Juan Pablo Duarte en República Dominicana."],
+  ["🇩🇴","Independencia Nacional (República Dominicana)",1,27,"Fecha patria de República Dominicana."],
+  ["🇩🇴","Restauración de la República (República Dominicana)",7,16,"Efeméride en República Dominicana."],
+  ["🇺🇾","Desembarco de los Treinta y Tres (Uruguay)",3,19,"Efeméride histórica en Uruguay."],
+  ["🇺🇾","Jura de la Constitución (Uruguay)",6,18,"Efeméride en Uruguay."],
+  ["🇺🇾","Declaratoria de la Independencia (Uruguay)",7,25,"Fecha patria de Uruguay."],
+  ["🇺🇾","Día del Patrimonio (Uruguay)",8,25,"Celebración cultural en Uruguay."],
+  ["🇻🇪","Declaración de Independencia (Venezuela)",3,19,"Efeméride en Venezuela."],
+  ["🇻🇪","Batalla de Carabobo (Venezuela)",5,24,"Efeméride histórica en Venezuela."],
+  ["🇻🇪","Firma del Acta de Independencia (Venezuela)",6,5,"Fecha patria de Venezuela."],
+  ["🇻🇪","Natalicio de Simón Bolívar (Venezuela)",6,24,"Conmemoración en Venezuela."]
 ];
 
 function mapDateItem(row, isTopDefault){
-  const [emoji,name,a,b]=row;
+  const [emoji,name,a,b,info]=row;
   return {
     emoji,
     name,
+    info:info||"Fecha destacada del calendario hispano.",
     isTopDefault:Boolean(isTopDefault),
     fn:typeof a==="function"?a:y=>new Date(y,a,b,0,0,0)
   };
@@ -294,8 +287,21 @@ function nextFest(fn){
   return t;
 }
 
-let activeHero={name:"Navidad",emoji:"🎄",target:nextFest(y=>new Date(y,11,25,0,0,0))};
+let activeHero={name:"Navidad",emoji:"🎄",info:"Celebración clásica de fin de año y encuentro familiar.",target:nextFest(y=>new Date(y,11,25,0,0,0))};
 let custom=JSON.parse(localStorage.getItem("mi_fecha")||"null");
+
+if(localStorage.getItem("tema_neon")==="1")document.body.classList.add("neon");
+document.getElementById("btn-theme").onclick=()=>{
+  document.body.classList.toggle("neon");
+  localStorage.setItem("tema_neon",document.body.classList.contains("neon")?"1":"0");
+};
+
+const btnCopy=document.getElementById("btn-copy");
+btnCopy.onclick=async()=>{
+  try{await navigator.clipboard.writeText(location.href)}catch(_){}
+  btnCopy.textContent="✅ Copiado";
+  setTimeout(()=>{btnCopy.textContent="🔗 Copiar"},1400);
+};
 
 const nextSelect=document.getElementById("next-select");
 allDatesList.forEach((f,idx)=>{
@@ -307,7 +313,7 @@ allDatesList.forEach((f,idx)=>{
 
 document.getElementById("btn-set-next").onclick=()=>{
   const chosen=allDatesList[Number(nextSelect.value)];
-  activeHero={emoji:chosen.emoji,name:chosen.name,target:nextFest(chosen.fn)};
+  activeHero={emoji:chosen.emoji,name:chosen.name,info:chosen.info,target:nextFest(chosen.fn)};
   tick();
 };
 
@@ -350,7 +356,7 @@ function renderTopTable(){
   const rows=pool.map(x=>{
     const dt=nextFest(x.fn);
     return {...x,dt,diff:dt-Date.now()};
-  }).sort((a,b)=>a.diff-b.diff).filter(x=>!q||normText(x.name).includes(q));
+  }).sort((a,b)=>a.diff-b.diff).filter(x=>!q||normText(`${x.name} ${x.info}`).includes(q));
 
   topCount.textContent=q
     ? `Resultados encontrados: ${rows.length} (catálogo Latam e hispano)`
@@ -361,21 +367,29 @@ function renderTopTable(){
       <td><b>#${i+1}</b></td>
       <td><b>${item.emoji} ${item.name}</b>${item.isTopDefault && !q?'<span class="badge">Top</span>':''}<br><span style="opacity:.7;font-size:.75rem">${item.dt.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"})}</span></td>
       <td style="font-variant-numeric:tabular-nums;font-weight:700">${fmtLeft(item.diff)}</td>
-      <td><button type="button" class="pick-btn" data-ts="${item.dt.getTime()}" data-emoji="${item.emoji}" data-name="${item.name.replace(/"/g,'&quot;')}">Usar</button></td>
+      <td><button type="button" class="pick-btn" data-ts="${item.dt.getTime()}" data-emoji="${item.emoji}" data-name="${item.name.replace(/"/g,'&quot;')}" data-info="${item.info.replace(/"/g,'&quot;')}">Usar</button></td>
     </tr>
   `).join("");
 
   topBody.querySelectorAll(".pick-btn").forEach(btn=>{
     btn.onclick=()=>{
-      activeHero={emoji:btn.dataset.emoji,name:btn.dataset.name,target:new Date(Number(btn.dataset.ts))};
+      activeHero={emoji:btn.dataset.emoji,name:btn.dataset.name,info:btn.dataset.info,target:new Date(Number(btn.dataset.ts))};
       tabHome.click();
       tick();
     };
   });
 }
 
-function updateBox(target,p,msgId,nextId){
+function updateBox(target,p,msgId,nextId,cardEl,progEl){
   const diff=target-Date.now(),msg=document.getElementById(msgId),nb=nextId?document.getElementById(nextId):null;
+  if(progEl){
+    const yearMs=365*86400*1000;
+    const pct=diff<=0?100:Math.max(0,Math.min(100,((yearMs-Math.min(diff,yearMs))/yearMs)*100));
+    progEl.style.width=pct.toFixed(1)+"%";
+  }
+  if(cardEl){
+    cardEl.classList.toggle("soon",diff<=7*86400*1000);
+  }
   if(diff<=0){
     ["d","h","m","s"].forEach(k=>document.getElementById(p+k).textContent="00");
     msg.style.display="block";
@@ -394,9 +408,10 @@ function updateBox(target,p,msgId,nextId){
 function tick(){
   document.getElementById("hero-emoji").textContent=activeHero.emoji;
   document.getElementById("hero-title").textContent=activeHero.name;
+  document.getElementById("hero-info").textContent=activeHero.info;
   document.getElementById("f-nav").textContent=activeHero.target.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-  updateBox(activeHero.target,"n","m-nav","next-box");
-  if(custom)updateBox(custom.ts,"c","m-cus",null);
+  updateBox(activeHero.target,"n","m-nav","next-box",document.getElementById("hero-card"),document.getElementById("prog-bar"));
+  if(custom)updateBox(custom.ts,"c","m-cus",null,null,null);
   renderTopTable();
 }
 
