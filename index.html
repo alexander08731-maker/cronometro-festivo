@@ -6,10 +6,16 @@
 <title>Cronómetro & Fechas Hispanas</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
-body{min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:18px;background:linear-gradient(135deg,#450a0a,#7f1d1d,#064e3b);color:#fff;padding:18px 14px 36px;text-align:center;transition:background .3s}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:18px;background:linear-gradient(135deg,#450a0a,#7f1d1d,#064e3b);color:#fff;padding:18px 14px 36px;text-align:center;transition:background .35s}
 body.theme-neon{background:linear-gradient(135deg,#090d16,#1e1b4b,#0f172a)}
 body.theme-ocean{background:linear-gradient(135deg,#042f2e,#0f766e,#1e3a8a)}
 body.theme-sunset{background:linear-gradient(135deg,#4c0519,#9d174d,#7c2d12)}
+body.celeb-xmas{background:linear-gradient(135deg,#14532d,#991b1b,#166534)}
+body.celeb-newyear{background:linear-gradient(135deg,#1e1b4b,#78350f,#312e81)}
+body.celeb-halloween{background:linear-gradient(135deg,#18181b,#7c2d12,#27272a)}
+body.celeb-love{background:linear-gradient(135deg,#500724,#be185d,#831843)}
+body.celeb-patria{background:linear-gradient(135deg,#172554,#991b1b,#1e3a8a)}
+body.celeb-party{background:linear-gradient(135deg,#3b0764,#c026d3,#0e7490)}
 .topbar{width:100%;max-width:660px;display:flex;gap:10px;flex-wrap:wrap;padding:8px;border-radius:18px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);box-shadow:0 10px 25px rgba(0,0,0,.35)}
 .nav-btn{flex:1;min-width:120px;padding:11px 12px;border-radius:13px;border:none;font-size:.9rem;font-weight:800;cursor:pointer;transition:.2s}
 .nav-main{background:rgba(255,255,255,.14);color:#fff}
@@ -169,10 +175,10 @@ th{position:sticky;top:0;background:#2a0b0e;font-size:.74rem;text-transform:uppe
   </section>
 </div>
 
-<footer class="ver-foot" id="ver-label">V. 0.7</footer>
+<footer class="ver-foot" id="ver-label">V. 0.8</footer>
 
 <script>
-const APP_VERSION="V. 0.7";
+const APP_VERSION="V. 0.8";
 document.getElementById("ver-label").textContent=APP_VERSION;
 
 // =========================================================================
@@ -180,11 +186,11 @@ document.getElementById("ver-label").textContent=APP_VERSION;
 // Ejemplo: { year: 2026, month: 12, day: 15, hour: 0, minute: 0 }
 // =========================================================================
 const EVENT_DATE_CONFIG = {
-  year: 2027,
-  month: 2,
-  day: 2,
-  hour: 2,
-  minute: 2
+  year: 2026,
+  month: 12,
+  day: 31,
+  hour: 0,
+  minute: 0
 };
 const EVENT_TARGET = new Date(
   EVENT_DATE_CONFIG.year,
@@ -202,15 +208,32 @@ const THEMES=[
   {cls:"theme-sunset",label:"🎨 Tema: Atardecer"}
 ];
 let themeIdx=Number(localStorage.getItem("tema_idx")||"0");
+let activeCelebClass="";
 const btnTheme=document.getElementById("btn-theme");
-function applyTheme(){
+
+function syncBodyTheme(){
   themeIdx=((themeIdx%THEMES.length)+THEMES.length)%THEMES.length;
-  document.body.className=THEMES[themeIdx].cls;
-  btnTheme.textContent=THEMES[themeIdx].label;
+  const manualCls=THEMES[themeIdx].cls;
+  document.body.className=activeCelebClass || manualCls;
+  btnTheme.textContent=activeCelebClass ? `🎉 Celeb: ${activeCelebClass.replace("celeb-","")}` : THEMES[themeIdx].label;
+}
+function applyTheme(){
+  activeCelebClass="";
   localStorage.setItem("tema_idx",String(themeIdx));
+  syncBodyTheme();
 }
 btnTheme.onclick=()=>{themeIdx=(themeIdx+1)%THEMES.length;applyTheme()};
-applyTheme();
+syncBodyTheme();
+
+function detectCelebrationTheme(label){
+  const t=String(label||"").toLowerCase();
+  if(t.includes("navidad")||t.includes("nochebuena"))return"celeb-xmas";
+  if(t.includes("ano nuevo")||t.includes("año nuevo")||t.includes("fin de ano")||t.includes("fin de año"))return"celeb-newyear";
+  if(t.includes("halloween")||t.includes("muertos"))return"celeb-halloween";
+  if(t.includes("valentin")||t.includes("valentín")||t.includes("amor")||t.includes("madres"))return"celeb-love";
+  if(t.includes("independencia")||t.includes("patrias")||t.includes("hispanidad")||t.includes("bandera"))return"celeb-patria";
+  return"celeb-party";
+}
 
 function easterDate(y){
   const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31)-1,da=((h+l-7*m+114)%31)+1;
@@ -366,7 +389,6 @@ function nextFest(fn){
 
 let activeHero={name:"Navidad",emoji:"🎄",target:nextFest(y=>new Date(y,11,25,0,0,0))};
 let custom=JSON.parse(localStorage.getItem("mi_fecha")||"null");
-
 const nextSelect=document.getElementById("next-select");
 allDatesList.forEach((f,idx)=>{
   const opt=document.createElement("option");
@@ -459,7 +481,7 @@ function updateBox(target,p,msgId,nextId){
     ["d","h","m","s"].forEach(k=>document.getElementById(p+k).textContent="00");
     msg.style.display="block";
     if(nb)nb.style.display="block";
-    return;
+    return true;
   }
   msg.style.display="none";
   if(nb)nb.style.display="none";
@@ -468,13 +490,14 @@ function updateBox(target,p,msgId,nextId){
   document.getElementById(p+"h").textContent=String(Math.floor(s%86400/3600)).padStart(2,"0");
   document.getElementById(p+"m").textContent=String(Math.floor(s%3600/60)).padStart(2,"0");
   document.getElementById(p+"s").textContent=String(s%60).padStart(2,"0");
+  return false;
 }
 
 function updateEventCountdown(){
   const now=new Date();
   if(now>=EVENT_TARGET){
     ["ev-mo","ev-d","ev-h","ev-m","ev-s"].forEach(id=>document.getElementById(id).textContent="00");
-    return;
+    return true;
   }
   let months=(EVENT_TARGET.getFullYear()-now.getFullYear())*12+(EVENT_TARGET.getMonth()-now.getMonth());
   let anchor=new Date(now.getFullYear(),now.getMonth()+months,now.getDate(),now.getHours(),now.getMinutes(),now.getSeconds());
@@ -493,6 +516,7 @@ function updateEventCountdown(){
   document.getElementById("ev-h").textContent=String(hours).padStart(2,"0");
   document.getElementById("ev-m").textContent=String(minutes).padStart(2,"0");
   document.getElementById("ev-s").textContent=String(seconds).padStart(2,"0");
+  return false;
 }
 
 function updateExtraInfo(){
@@ -521,9 +545,18 @@ function tick(){
   document.getElementById("hero-emoji").textContent=activeHero.emoji;
   document.getElementById("hero-title").textContent=activeHero.name;
   document.getElementById("f-nav").textContent=activeHero.target.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-  updateBox(activeHero.target,"n","m-nav","next-box");
-  if(custom)updateBox(custom.ts,"c","m-cus",null);
-  updateEventCountdown();
+  const heroDone=updateBox(activeHero.target,"n","m-nav","next-box");
+  const customDone=custom?updateBox(custom.ts,"c","m-cus",null):false;
+  const eventDone=updateEventCountdown();
+
+  let finishedLabel="";
+  if(heroDone)finishedLabel=activeHero.name;
+  else if(customDone&&custom)finishedLabel=custom.name;
+  else if(eventDone)finishedLabel="Evento Especial";
+
+  activeCelebClass=finishedLabel ? detectCelebrationTheme(finishedLabel) : "";
+  syncBodyTheme();
+
   updateExtraInfo();
   renderTopTable();
 }
