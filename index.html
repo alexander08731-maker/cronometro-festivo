@@ -16,13 +16,14 @@ body.celeb-halloween{background:linear-gradient(135deg,#18181b,#7c2d12,#27272a)}
 body.celeb-love{background:linear-gradient(135deg,#500724,#be185d,#831843)}
 body.celeb-patria{background:linear-gradient(135deg,#172554,#991b1b,#1e3a8a)}
 body.celeb-party{background:linear-gradient(135deg,#3b0764,#c026d3,#0e7490)}
-.topbar{width:100%;max-width:660px;display:flex;gap:10px;flex-wrap:wrap;padding:8px;border-radius:18px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);box-shadow:0 10px 25px rgba(0,0,0,.35)}
+#confetti-canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50;display:none}
+.topbar{position:relative;z-index:2;width:100%;max-width:660px;display:flex;gap:10px;flex-wrap:wrap;padding:8px;border-radius:18px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);box-shadow:0 10px 25px rgba(0,0,0,.35)}
 .nav-btn{flex:1;min-width:120px;padding:11px 12px;border-radius:13px;border:none;font-size:.9rem;font-weight:800;cursor:pointer;transition:.2s}
 .nav-main{background:rgba(255,255,255,.14);color:#fff}
 .nav-top{background:linear-gradient(90deg,#f59e0b,#ec4899,#8b5cf6);color:#fff;box-shadow:0 4px 15px rgba(236,72,153,.35)}
 .nav-theme{flex:0 1 auto;background:rgba(255,255,255,.18);color:#fff;font-size:.82rem;padding:11px 12px}
 .nav-btn.active{outline:2px solid #fff;transform:scale(1.01)}
-.wrap{width:100%;max-width:660px;display:flex;flex-direction:column;gap:20px}
+.wrap{position:relative;z-index:2;width:100%;max-width:660px;display:flex;flex-direction:column;gap:20px}
 .card{width:100%;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.16);border-radius:24px;padding:20px 14px}
 .emoji{font-size:3rem;margin-bottom:6px}
 h1{font-size:1.85rem;margin-bottom:4px}
@@ -59,11 +60,13 @@ th{position:sticky;top:0;background:#2a0b0e;font-size:.74rem;text-transform:uppe
 .info-k{font-size:.7rem;text-transform:uppercase;letter-spacing:1.2px;opacity:.72;margin-bottom:4px}
 .info-v{font-size:.9rem;font-weight:700;line-height:1.35}
 .soon-title{font-size:2.1rem;font-weight:900;margin-bottom:18px;letter-spacing:.5px}
-.ver-foot{margin-top:auto;font-size:.8rem;opacity:.75;letter-spacing:.6px}
+.ver-foot{position:relative;z-index:2;margin-top:auto;font-size:.8rem;opacity:.75;letter-spacing:.6px}
 .hidden{display:none}
 </style>
 </head>
 <body>
+
+<canvas id="confetti-canvas"></canvas>
 
 <header class="topbar">
   <button type="button" id="tab-home" class="nav-btn nav-main active">⏳ Cronómetros</button>
@@ -175,10 +178,10 @@ th{position:sticky;top:0;background:#2a0b0e;font-size:.74rem;text-transform:uppe
   </section>
 </div>
 
-<footer class="ver-foot" id="ver-label">V. 0.8</footer>
+<footer class="ver-foot" id="ver-label">V. 0.9</footer>
 
 <script>
-const APP_VERSION="V. 0.8";
+const APP_VERSION="V. 0.9";
 document.getElementById("ver-label").textContent=APP_VERSION;
 
 // =========================================================================
@@ -233,6 +236,81 @@ function detectCelebrationTheme(label){
   if(t.includes("valentin")||t.includes("valentín")||t.includes("amor")||t.includes("madres"))return"celeb-love";
   if(t.includes("independencia")||t.includes("patrias")||t.includes("hispanidad")||t.includes("bandera"))return"celeb-patria";
   return"celeb-party";
+}
+
+// Confeti ligero para celebraciones cuando termina cualquier contador
+const canvas=document.getElementById("confetti-canvas");
+const ctx=canvas.getContext("2d");
+let confettiPieces=[];
+let confettiAnimId=null;
+let currentConfettiKey="";
+
+const PALETTES={
+  "celeb-xmas":["#ef4444","#22c55e","#fbbf24","#ffffff"],
+  "celeb-newyear":["#fbbf24","#f472b6","#38bdf8","#c084fc"],
+  "celeb-halloween":["#f97316","#a855f7","#eab308","#e4e4e7"],
+  "celeb-love":["#f43f5e","#fb7185","#fda4af","#fde047"],
+  "celeb-patria":["#3b82f6","#ef4444","#ffffff","#fbbf24"],
+  "celeb-party":["#34d399","#fbbf24","#f472b6","#60a5fa","#c084fc"]
+};
+
+function resizeCanvas(){
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+}
+window.addEventListener("resize",resizeCanvas);
+resizeCanvas();
+
+function spawnConfetti(celebCls){
+  const colors=PALETTES[celebCls]||PALETTES["celeb-party"];
+  confettiPieces=Array.from({length:75},()=>({
+    x:Math.random()*canvas.width,
+    y:Math.random()*-canvas.height,
+    w:6+Math.random()*6,
+    h:4+Math.random()*5,
+    vy:1.6+Math.random()*2.8,
+    vx:(Math.random()-.5)*1.6,
+    rot:Math.random()*Math.PI*2,
+    vRot:(Math.random()-.5)*.14,
+    color:colors[Math.floor(Math.random()*colors.length)]
+  }));
+}
+
+function renderConfetti(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(const p of confettiPieces){
+    p.y+=p.vy;
+    p.x+=p.vx+Math.sin(p.y*.02)*.5;
+    p.rot+=p.vRot;
+    if(p.y>canvas.height+16){
+      p.y=-12;
+      p.x=Math.random()*canvas.width;
+    }
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot);
+    ctx.fillStyle=p.color;
+    ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+    ctx.restore();
+  }
+  confettiAnimId=requestAnimationFrame(renderConfetti);
+}
+
+function setConfettiState(celebCls){
+  if(!celebCls){
+    currentConfettiKey="";
+    canvas.style.display="none";
+    if(confettiAnimId){cancelAnimationFrame(confettiAnimId);confettiAnimId=null;}
+    return;
+  }
+  canvas.style.display="block";
+  if(currentConfettiKey!==celebCls){
+    currentConfettiKey=celebCls;
+    spawnConfetti(celebCls);
+  }
+  if(!confettiAnimId){
+    renderConfetti();
+  }
 }
 
 function easterDate(y){
@@ -389,6 +467,7 @@ function nextFest(fn){
 
 let activeHero={name:"Navidad",emoji:"🎄",target:nextFest(y=>new Date(y,11,25,0,0,0))};
 let custom=JSON.parse(localStorage.getItem("mi_fecha")||"null");
+
 const nextSelect=document.getElementById("next-select");
 allDatesList.forEach((f,idx)=>{
   const opt=document.createElement("option");
@@ -556,6 +635,7 @@ function tick(){
 
   activeCelebClass=finishedLabel ? detectCelebrationTheme(finishedLabel) : "";
   syncBodyTheme();
+  setConfettiState(activeCelebClass);
 
   updateExtraInfo();
   renderTopTable();
